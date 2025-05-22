@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    
+</head>
+<body>
+
+    <div class="page active" id="login-page">
+
+        <div class="form-container">
+            <div class="col col-1">
+                <div class="image-layer">
+                    <img src="assets/rsz_icon.png" alt="">
+                </div>
+                <p class="logo-information">
+                    <div class="detail-logo">
+                        <h2>Time. Skill. Productivity</h2>
+                        Every seconds counts, <span class="detail-fragment">OWN YOUR TIME</span>
+                    </div>
+                </p>
+            </div>
+
+            <div class="col col-2">
+           
+            </div>
+        </div>
+
+           
+
+    </div>
+
+    <nav class="main-nav">
+        <div class="date-time">
+            <div class="time"></div>
+            <div class="date"></div>
+        </div>
+        
+        <div class="search">
+
+            <div class="search-bar">
+                <form>
+                    <input type="text" placeholder="Search">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <div class="total-time-card button-hour">
+                    <div id="time-total"></div>
+                    <div class="time-label">Hours of Work</div>
+            </div>
+
+            <div id="streak-badge">
+                
+                <div id="badge-icon">
+                    <img src="assets/badges/like.png" alt="streak-icon">
+                </div>
+                <div id="streak-days">Day 1</div>
+            
+            </div>
+
+        </div>
+
+    </nav>
+
+    <aside class="sidebar-aside collapse"> 
+
+        <header class="sidebar-header">
+            <a href="" class="header-logo">
+                <img src="assets/rsz_icon.png" alt="icon">
+            </a>
+            <button class="toggler sidebar-toggler">
+                <span class="material-symbols-rounded">chevron_left</span>
+            </button> 
+
+            <button class="toggler menu-toggler">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
+        </header>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-list primary-nav">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link" data-page="dashboard">
+                        <span class="nav-icon material-symbols-rounded">dashboard</span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="works-done">
+                        <span class="nav-icon material-symbols-rounded">task_alt</span>
+                        <span class="nav-label">Tasks Page</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="analytics">
+                        <span class="nav-icon material-symbols-rounded">analytics</span>
+                        <span class="nav-label">Comparison</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="search">
+                        <span class="nav-icon material-symbols-rounded">search</span>
+                        <span class="nav-label">Search & Filter</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="profile">
+                        <span class="nav-icon material-symbols-rounded">person</span>
+                        <span class="nav-label">Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-list secondary-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">settings</span>
+                        <span class="nav-label">Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">logout</span>
+                        <span class="nav-label">Logout</span>
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+    </aside>
+
+    <main class="hidden">
+
+        <div class="page" id="dashboard-page">
+
+        <section class="task-overview task-overview-smaller-screen">
+            <div class="total-time-card  card-hour">
+                <div class="time card">
+                    <div id="time-total">0</div>
+                    <div class="time-label">Hours of Work</div>
+                </div> 
+            </div>
+            <div class="task-cards">
+                <div class="task card">
+                    <div id="paused-count">0</div>
+                    <div class="task-label">Paused Tasks</div>
+                </div> 
+                <div class="task card">
+                    <div id="completed-count">0</div>
+                    <div class="task-label">Completed Tasks</div>
+                </div>
+                
+                <div class="task card">
+                    <div id="total-count">0</div>
+                    <div class="task-label">Total Tasks</div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section id="activeTaskPanel" class="active-task-panel ">
+
+
+        <div class="task-overview task-overview-large-screen">
+            <div class="total-time-card  card-hour">
+                <div class="time card">
+                    <div id="time-total">0</div>
+                    <div class="time-label">Hours of Work</div>
+                </div> 
+            </div>
+            <div class="task-cards">
+                <div class="task card">
+                    <div id="paused-count">0</div>
+                    <div class="task-label">Paused Tasks</div>
+                </div> 
+                <div class="task card">
+                    <div id="completed-count">0</div>
+                    <div class="task-label">Completed Tasks</div>
+                </div>
+                
+                <div class="task card">
+                    <div id="total-count">0</div>
+                    <div class="task-label">Total Tasks</div>
+                </div>
+            </div>
+        </div>
+        
+           
+            <div class="active-task-details">
+             
+                <h2>Ongoing Task</h2>
+                <div class="task-card" id="ongoingTaskCard">
+                    <p><strong>Name:</strong><span id="displayTaskName"> -- </span></p>
+                    <p><strong>Tag:</strong><span id="displayTag"> -- </span></p>
+                    <p><strong>Priority:</strong><span id="displayPriority"> -- </span></p>
+                    <p><strong>Start Date:</strong> <span id="displayStartDate"> -- </span></p>
+                    <p><strong>Status:</strong><span id="displayStatus">Ongoing</span> </p>
+                    <p><strong>Target Time:</strong><span id="displayTargetTime"> -- </span></p>
+                    <button id="addTaskBtn" class="add-task-btn">New Task</button>
+                </div>
+
+            </div>
+
+            <div class="active-task">
+                <div class="timer-outer-circle">
+                    <h1 id="timer">00:00:00</h1>
+                </div>
+                <div class="control-btns">
+                  
+                        <button id="startTimerBtn" >Start</button>
+                        <button id="pauseTimerBtn" >Pause</button>
+                        <button id="endTimerBtn" >End</button>
+                  
+                </div>
+            </div>
+
+        </section>
+
+            <section class="paused-tasks-section">
+                <h2>Paused Tasks</h2>
+                <div class="table-container">
+                    <table id="pausedTaskTable">
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Priority</th>
+                                <th>Tag</th>
+                                <th>Start Date</th>
+                                <th>Target Date</th>
+                                <th>Total Time</th>
+                                <th>Time Fragment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pausedTaskTableBody"></tbody>
+                    </table>
+                </div>
+
+            </section>
+
+        </div>
+
+        <div class="page" id="works-done-page">
+            <h1>Completed Tasks</h1>
+            <div class="table-container">
+                <table id="completedTaskTable">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Priority</th>
+                            <th>Tag</th>
+                            <th>Start Date</th>
+                            <th>Target Date</th>
+                            <th>End Date</th>
+                            <th>Total Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="completedTaskTableBody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="page" id="analytics-page">
+            <h1>Analytics</h1>
+            
+            <div id="graphContainer"></div>
+          
+            <!-- <div class="analytics-container">
+            </div> -->
+        </div>
+
+        <div class="page" id="search-page">
+            <h1>Search & Filter</h1>
+            <div class="search-filter-container">
+
+                <div class="search-filters">
+
+                    <div class="filter-group">
+                        <label for="filterName">Task Name</label>
+                        <input type="text" id="filterName" placeholder="Enter Task name">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterTag">Tag</label>
+                        <input type="text" id="filterTag" placeholder="Enter Task tag">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterPriority">Priority</label>
+                        <select id="filterPriority">
+                            <option value="">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterStatus">Status</label>
+                        <select id="filterStatus">
+                            <option value="">All status</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="Paused">Paused</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group date-filter">
+                        <label for="filterStartDate">Date</label>
+                        <div class="date-input-range">
+                            <input type="date" id="filterStartDate">
+                            <span class="between">To</span>
+                            <input type="date" id="filterEndDate">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group filter-btns">
+                        <button id="applyFiltersBtn">Apply Filters</button>
+                    </div>
+
+                </div>
+                <div class="search-results">
+                    <h2>Search Results</h2>
+                    <div id="searchResultsContainer"></div>
+                  
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="profile-page">
+            <h1>Profile</h1>
+            <button id="editProfileBtn">
+                <i class="fa-solid fa-user-pen"></i>
+            </button>
+            <div class="profile-container">
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                      
+                        <span class="profile-pic">
+                           
+                        </span>
+
+                        <input type="file" class="profile-btn">
+
+                    </div>
+
+                    <div class="profile-details">
+
+                        <div class="profile-name details">
+                            <p class="name label-title">Username</p>
+                            <p id="username" class="label-placeholder"></p>
+                        </div>
+                        
+                        <div class="profile-designation details">
+                            <p class="designation label-title">Designation</p>
+                            <p id="designation" class="label-placeholder"></p>
+                        </div>
+
+                        <div class="profile-email details">
+                            <p class="email label-title">Email</p>
+                            <p id="email" class="label-placeholder"></p>
+                        </div>
+
+                        <div class="profile-dateOfBirth details">
+                            <p class="birthdate label-title">Date of Birth</p>
+                            <p id="birthDate" class="label-placeholder"></p>
+                        </div>
+
+                        <div class="profile-about details">
+                            <p class="about-me label-title">About</p>
+                            <p id="aboutContent" class="label-placeholder"></p>
+                        </div>
+
+                        <div class="social-media details">
+                            <p id="linkedIn">
+                                <span class="profile-title">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </span>
+                                <span id="linkedIn-id"></span>
+                            </p>
+                            <p id="github">
+                                <span class="profile-title">
+                                    <i class="fab fa-github"></i>
+                                </span>
+                                <span id="github-id"></span>
+                            </p>
+                            <p id="hackerRank">
+                                <span class="profile-title">
+                                    <i class="fab fa-hackerrank"></i>
+                                </span>
+                                <span id="hackerRank-id"></span>
+                            </p>
+                        </div>
+                     
+                    </div>
+  
+                </div>              
+            </div>
+        </div>
+    </main>
+
+        <!-- <script src="analytics.js" type="module"></script>
+        <script src="authentication.js"></script>
+        <script src="dateAndTime.js"></script>
+        <script src="task.js" type="module"></script> 
+        <script src="filter.js"></script>
+        <script src="authPage.js"></script>
+        <script src="storage.js" type="module"></script> -->
+
+        <script type="module" src="src/main.js"></script>
+
+</body> 
+</html>
