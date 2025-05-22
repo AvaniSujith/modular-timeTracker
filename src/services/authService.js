@@ -1,3 +1,5 @@
+import { loadUserTasks, initializeUserTasks } from "../userTasks.js";
+
 function loadUsers(){
     try{
         return JSON.parse(localStorage.getItem('users')) || [];
@@ -18,6 +20,7 @@ export function signup(userData){
         return null;
     }
     const newUser = { ...userData };
+    initializeUserTasks(newUser.email)
     users.push(newUser);
     saveUsers(users);
     localStorage.setItem('currentUser', JSON.stringify(newUser));
@@ -25,11 +28,48 @@ export function signup(userData){
 }
 
 export function login(email, password){
+
+    if(!email || !password) return null;
+
     const users = loadUsers();
-    const user = users.find(u => u.email === email && u.password === password);
+    console.log("Login attempt with email:", email, "password:", password);
+    console.log("Users loaded from localStorage:", users);
+
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedPassword = password.trim();
+
+    console.log("Trimmed and lowercased email:", trimmedEmail);
+    console.log("Trimmed password:", trimmedPassword);
+
+    const user = users.find(u => {
+        console.log("Checking user:", u);
+        if (!u || typeof u !== 'object') {
+            console.log("Invalid user format in array.");
+            return false;
+        }
+        const userEmail = String(u.email).trim().toLowerCase();
+        const userPassword = String(u.password).trim();
+
+        console.log("Comparing with stored user - Email:", userEmail, "Password:", userPassword);
+        const emailMatch = userEmail === trimmedEmail;
+        const passwordMatch = userPassword === trimmedPassword;
+        console.log("Email match:", emailMatch, "Password match:", passwordMatch);
+
+        return emailMatch && passwordMatch;
+    });
+
+    console.log("Login result - found user:", user);
+
     if(!user) return null;
     localStorage.setItem('currentUser', JSON.stringify(user));
+    // Assuming loadUserTasks now returns the tasks and doesn't save to generic key
+    // The taskService will handle loading tasks for the current user after login.
+    // No need to call loadUserTasks here anymore as it's handled by taskService on initialization/load.
+    // loadUserTasks(email); // Removed this call
+
     return user;
+
+    return user;  
 }
 
 export function logout(){

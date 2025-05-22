@@ -1,16 +1,37 @@
 
-export function handlingNavLinks(){
-    const links = document.querySelectorAll(".nav-link"); // Corrected selector
-    links.forEach(link => {
-        link.addEventListener("click", (event) => { // Added event parameter
-            event.preventDefault(); // Prevent default link behavior
-            const targetId = link.getAttribute("data-page"); // Corrected attribute
+import { renderCompletedTable, renderPausedTable } from "./views/taskView.js";
+import { createGraph } from "./analytics.js";
 
-            document.querySelectorAll(".page").forEach(page => {
-                page.classList.remove("active");
+export function handlingNavLinks(){
+    const navLinks = document.querySelectorAll('.nav-link[data-page]');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            const targetPage = link.getAttribute('data-page');
+
+            // Remove active class from all nav items and add to the clicked one
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            link.parentElement.classList.add('active');
+
+            // Hide all pages and show the target page
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
             });
 
-            document.getElementById(targetId)?.classList.add("active");
+            const targetPageElement = document.getElementById(`${targetPage}-page`);
+            if(targetPageElement){
+                targetPageElement.classList.add('active');
+            }
+
+            // Call rendering functions based on the target page
+            if(targetPage === 'works-done'){
+                renderCompletedTable();
+            } else if(targetPage === 'analytics'){
+                setTimeout(createGraph, 100);
+            } else if(targetPage === 'dashboard') {
+                renderPausedTable();
+            }
         });
     });
 }

@@ -6,39 +6,28 @@ import {
     loadActiveTaskId,
     removeActiveTaskId
 } from "../storage.js";
-
-// export function getTasks(){
-//     try{
-//         return JSON.parse(localStorage.getItem('tasks')) || [];
-//     }catch(e){
-//         console.error('Failed to get task from local Storage', e)
-//         return [];
-//     }
-// }
+import { getCurrentUser } from "./authService.js"; // Import getCurrentUser
 
 export function getTasks(){
-    return loadFromStorage();
+    const currentUser = getCurrentUser(); // Get current user
+    if (!currentUser) return []; // Return empty array if no user
+    return loadFromStorage(currentUser.email); // Load tasks for current user
 }
 
-// export function saveTasks(tasks){
-//     localStorage.setItem('tasks', JSON.stringify(tasks));
-// }
-
 function saveTasks(tasks){
-    saveToStorage(tasks);
+    const currentUser = getCurrentUser(); // Get current user
+    if (!currentUser) return; // Do not save if no user
+    saveToStorage(currentUser.email, tasks); // Save tasks for current user
 }
 
 export function addTask(task){
-    // const tasks = getTasks();
     const tasks = getTasks();
     const newTask = { ...task, id:Date.now().toString() };
-    // task.id = Date.now().toString();
     tasks.push(newTask);
     saveTasks(tasks);
 }
 
 export function updateTask(updatedTask){
-    // const tasks = getTasks();
     const tasks = getTasks()
     const idx = tasks.findIndex(t => t.id === updatedTask.id);
     if(idx !== -1){
@@ -58,17 +47,16 @@ export function getActiveTask(){
 }
 
 export function setActiveTask(id){
-    // localStorage.setItem('activeTaskId', id);
     saveActiveTaskId(id);
 }
 
 export function clearActiveTask(){
-    // localStorage.removeItem('activeTaskId');
-    removeActiveTaskId(id);
+    // The original code had removeActiveTaskId(id), but removeActiveTaskId in storage.js
+    // does not take an argument. Correcting to call without argument.
+    removeActiveTaskId();
 }
 
 export function getActiveTaskId(){
-    // return localStorage.getItem('activeTaskId');
     return loadActiveTaskId();
 }
 

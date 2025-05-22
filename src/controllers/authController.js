@@ -13,8 +13,23 @@ export function initAuth(){
                     showError('login', 'Invalid email or password');
                     return;
                 }
-               
-                    location.reload();
+
+                // Hide login page and show protected content
+                const mainSidebar = document.querySelector('.sidebar-aside');
+                const mainNav = document.querySelector('.main-nav');
+                const loginPage = document.getElementById('login-page');
+                const mainContent = document.querySelector('main');
+                const dashboardPage = document.getElementById('dashboard-page');
+                const otherPages = document.querySelectorAll('main > .page');
+
+
+                if (mainSidebar) mainSidebar.classList.remove('hidden');
+                if (mainNav) mainNav.classList.remove('hidden');
+                if (mainContent) mainContent.classList.remove('hidden');
+                if (loginPage) loginPage.classList.remove('active');
+                otherPages.forEach(page => page.classList.remove('active'));
+                if (dashboardPage) dashboardPage.classList.add('active');
+
             },
             signup: ( userData ) => {
                 const newUser =  signup(userData);
@@ -22,14 +37,39 @@ export function initAuth(){
                     showError('signUp', 'user exxists');
                     return;
                 }
-               
-                location.reload();
-            
+
+                // After successful signup, directly switch visibility
+                // Removed redundant login call
+                const mainSidebar = document.querySelector('.sidebar-aside');
+                const mainNav = document.querySelector('.main-nav');
+                const loginPage = document.getElementById('login-page');
+                const mainContent = document.querySelector('main');
+                const dashboardPage = document.getElementById('dashboard-page');
+                const otherPages = document.querySelectorAll('main > .page');
+
+
+                if (mainSidebar) mainSidebar.classList.remove('hidden');
+                if (mainNav) mainNav.classList.remove('hidden');
+                if (mainContent) mainContent.classList.remove('hidden');
+                if (loginPage) loginPage.classList.remove('active');
+                otherPages.forEach(page => page.classList.remove('active'));
+                if (dashboardPage) dashboardPage.classList.add('active');
             }
         });
-    
+
         showLogoutButton(() => {
           logout();
-          location.reload();
+          // After logout, hide protected content and show login page
+            const mainSidebar = document.querySelector('.sidebar-aside');
+            const mainNav = document.querySelector('.main-nav');
+            const loginPage = document.getElementById('login-page');
+            const mainContent = document.querySelector('main');
+            const otherPages = document.querySelectorAll('main > .page');
+
+            if (mainSidebar) mainSidebar.classList.add('hidden');
+            if (mainNav) mainNav.classList.add('hidden');
+            if (mainContent) mainContent.classList.add('hidden');
+            if (loginPage) loginPage.classList.add('active');
+            otherPages.forEach(page => page.classList.remove('active'));
         })
 }
