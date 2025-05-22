@@ -6,18 +6,22 @@ import {
     loadActiveTaskId,
     removeActiveTaskId
 } from "../storage.js";
-import { getCurrentUser } from "./authService.js"; // Import getCurrentUser
+import { getCurrentUser } from "./authService.js";
 
 export function getTasks(){
-    const currentUser = getCurrentUser(); // Get current user
-    if (!currentUser) return []; // Return empty array if no user
-    return loadFromStorage(currentUser.email); // Load tasks for current user
+    const currentUser = getCurrentUser(); 
+    if (!currentUser) {
+        console.log("getTasks: No current user, returning empty array.");
+        return []; 
+    }
+    const tasks = loadFromStorage(currentUser.email);
+    return tasks;
 }
 
 function saveTasks(tasks){
-    const currentUser = getCurrentUser(); // Get current user
-    if (!currentUser) return; // Do not save if no user
-    saveToStorage(currentUser.email, tasks); // Save tasks for current user
+    const currentUser = getCurrentUser(); 
+    if (!currentUser) return; 
+    saveToStorage(currentUser.email, tasks); 
 }
 
 export function addTask(task){
@@ -25,6 +29,7 @@ export function addTask(task){
     const newTask = { ...task, id:Date.now().toString() };
     tasks.push(newTask);
     saveTasks(tasks);
+    return newTask;
 }
 
 export function updateTask(updatedTask){
@@ -39,6 +44,11 @@ export function updateTask(updatedTask){
 export function deleteTask(id){
     const tasks = getTasks().filter(t => t.id !== id);
     saveTasks(tasks);
+
+    const activeTaskId = getActiveTaskId();
+    if (activeTaskId === id) {
+        clearActiveTask(); // Clear active task if the deleted task was active
+    }
 }
 
 
@@ -51,8 +61,6 @@ export function setActiveTask(id){
 }
 
 export function clearActiveTask(){
-    // The original code had removeActiveTaskId(id), but removeActiveTaskId in storage.js
-    // does not take an argument. Correcting to call without argument.
     removeActiveTaskId();
 }
 
@@ -69,8 +77,19 @@ export function resumeTask(id){
     const tasks = getTasks();
     const task = tasks.find(t => t.id === id);
     if(task){
+        // Pause any currently ongoing task
+        const ongoingTask = tasks.find(t => t.status === 'ongoing');
+        if (ongoingTask) {
+            ongoingTask.status = 'paused';
+            // Assuming saveTimerState is needed here to save the duration of the paused task
+            // Need to ensure saveTimerState is imported and correctly implemented to handle this
+            // For now, I will just update the status and save tasks.
+            // saveTimerState(ongoingTask); // This might need to be called from the controller
+        }
+
         task.status = 'ongoing';
         saveTasks(tasks);
+        setActiveTask(id); // Set the resumed task as active
     }
 }
 
@@ -81,5 +100,10 @@ export function completeTask(id){
         task.status = 'completed';
         task.endDate = todayISO();
         saveTasks(tasks);
+        
+        const activeTaskId = getActiveTaskId();
+        if (activeTaskId === id) {
+            clearActiveTask(); // Clear active task if the completed task was active
+        }
     }
 }

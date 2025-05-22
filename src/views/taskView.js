@@ -1,12 +1,12 @@
 import { todayISO } from "../utils/dateUtils.js";
 import { formatTimeFragment } from "../utils/timeUtils.js";
+import * as taskService from '../services/taskService.js';
 
 export function showNewTaskModal(onSubmit){
-    
     const modal = document.createElement("div");
     modal.className = 'modal'; 
     modal.innerHTML = `
-            <div class="modal-content">
+        <div class="modal-content">
             <span class="close">&times;</span>
             <h2>New Task</h2>
             <form id="newTaskForm" class="task-form">
@@ -19,7 +19,7 @@ export function showNewTaskModal(onSubmit){
                     <label for="priority">Priority</label>
                     <select id="priority">
                         <option value="high">High</option>
-                        <option value="medium">Medium</option>
+                        <option value="medium" selected>Medium</option>
                         <option value="low">Low</option>
                     </select>
                 </div>
@@ -58,7 +58,6 @@ export function showNewTaskModal(onSubmit){
                 </div>
             </form>
         </div>
-
     `;
 
     document.body.appendChild(modal);
@@ -66,7 +65,6 @@ export function showNewTaskModal(onSubmit){
 
     modal.querySelector('.close').onclick = () => modal.remove();
     modal.querySelector('.close-btn').onclick = () => modal.remove();
-
 
     modal.querySelector('#addTaskBtnModal').onclick = () => {
         const data = {
@@ -83,13 +81,18 @@ export function showNewTaskModal(onSubmit){
     };
 }
 
-
 export function renderPausedTable(tasks, onMoreClick){
+    console.log("renderPausedTable called with:", tasks.length, "tasks");
+    
     const tbody = document.getElementById('pausedTaskTableBody');
-    if(!tbody) return;
+    if(!tbody) {
+        console.error("pausedTaskTableBody element not found");
+        return;
+    }
     tbody.innerHTML = '';
 
     tasks.forEach(task => {
+        console.log("Rendering paused task:", task.id, task.name);
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${task.name}</td>
@@ -100,25 +103,34 @@ export function renderPausedTable(tasks, onMoreClick){
             <td>${task.timeTaken || "00:00:00"}</td>
             <td>${formatTimeFragment(task.timeFragments)}</td>
             <td>
-            <button class="action-btn more-btn")">More</button>
+                <button class="action-btn more-btn" data-task-id="${task.id}">More</button>
             </td>  
         `;
 
-        row.querySelector('.more-btn').onclick = () => onMoreClick(task.id);
+        const moreBtn = row.querySelector('.more-btn');
+        moreBtn.onclick = (e) => {
+            e.preventDefault();
+            console.log("More button clicked for task:", task.id);
+            onMoreClick(task.id);
+        };
         tbody.appendChild(row);
     });
 }
 
-
 export function renderCompletedTable(tasks, onMoreClick){
+    console.log("renderCompletedTable called with:", tasks.length, "tasks");
+    
     const tbody = document.getElementById('completedTaskTableBody');
-    if(!tbody) return;
+    if(!tbody) {
+        console.error("completedTaskTableBody element not found");
+        return;
+    }
     tbody.innerHTML = '';
 
     tasks.forEach(task => {
+        console.log("Rendering completed task:", task.id, task.name);
         const row = document.createElement('tr');
         row.innerHTML = `
-            
             <td>${task.name}</td>
             <td><span class="priority-badge priority-${task.priority}">${task.priority}</span></td>
             <td><span class="tag-badge">${task.tag}</span></td> 
@@ -127,57 +139,171 @@ export function renderCompletedTable(tasks, onMoreClick){
             <td>${task.endDate || "--"}</td>
             <td>${task.timeTaken || "00:00:00"}</td>
             <td>
-                <button class="action-btn more-btn")">More</button>
+                <button class="action-btn more-btn" data-task-id="${task.id}">More</button>
             </td>  
         `;
 
-        row.querySelector('.more-btn').onclick = () => onMoreClick(task.id);
+        const moreBtn = row.querySelector('.more-btn');
+        moreBtn.onclick = (e) => {
+            e.preventDefault();
+            console.log("More button clicked for task:", task.id);
+            onMoreClick(task.id);
+        };
         tbody.appendChild(row);    
     });
 }
 
-
-export function showDetailsModal(task, { resume, edit, complete, del }){
-
-    let modal = document.getElementById('taskDetailsModal');
-    if(!modal){
-        modal = document.createElement('div');
-        modal.id = 'taskDetailsModal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content" id="taskDetailsContent"></div>
-        `;
-        document.body.appendChild(modal);
+export function showDetailsModal(taskId, actions = {}){
+    console.log("=== showDetailsModal ===");
+    console.log("Looking for task ID:", taskId, "Type:", typeof taskId);
+    
+    // Use taskService instead of direct localStorage access
+    const task = taskService.getTaskById(taskId);
+    
+    if(!task) {
+        console.error("Task not found with ID:", taskId);
+        console.log("Available tasks:", taskService.getTasks());
+        return;
     }
 
-    const container = document.getElementById('taskDetailsContent');
-    container.innerHTML = `
-        <span class="close">&times;</span>
-        <h2>${task.name}</h2>
+    console.log("Found task:", task);
 
-        <div class="action-buttons">
-            ${task.status === 'paused' ? '<button class="btn-primary" id="btnResume">Resume</button>' : ''}
-            <button class="btn-secondary" id="btnEdit">Edit</button>
-            ${task.status !== 'completed' ? '<button class="btn-success" id="btnComplete">Complete</button>' : ''}
-            <button class="btn-danger" id="btnDelete">Delete</button>
+    // Remove existing modal if it exists
+    const existingModal = document.getElementById("taskDetailsModal");
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modalElement = document.createElement("div");
+    modalElement.id = "taskDetailsModal";
+    modalElement.classList.add("modal");
+    
+    modalElement.innerHTML = `
+        <div class="modal-content" id="taskDetailsContent">
+            <span class="close">&times;</span>
+            <h2>${task.name}</h2>
+            <div class="task-details">
+                <div>
+                    <p class="modal-label"><strong>Priority:</strong> </p>
+                    <p class="priority-badge priority-${task.priority} modal-description">${task.priority}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Tag:</strong></p>
+                    <p class="tag-badge modal-description">${task.tag}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Status:</strong></p>
+                    <p class="status-badge status-${task.status} modal-description">${task.status}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Start Date:</strong></p>
+                    <p class="start-date modal-description">${task.startDate}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>End Date:</strong></p>
+                    <p class="end-date modal-description">${task.endDate || "--"}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Target Date:</strong></p>
+                    <p class="target-date modal-description"> ${task.targetDate || "--"}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Total Time Taken:</strong></p>
+                    <p class="time-taken modal-description">${task.timeTaken || "00:00:00"}</p>
+                </div>
+                <div>
+                    <p class="modal-label"><strong>Description:</strong></p>
+                    <p class="task-description modal-description">${task.details || "No description"}</p>
+                </div>
+
+                <h3>Time Details</h3>
+                <section class="time-fragments">
+                    <div class="table-container">
+                        <table class="time-fragment-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${(task.timeFragments || []).map(f => `
+                                    <tr>
+                                        <td>${f.date}</td>
+                                        <td>${f.duration}</td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <div class="action-buttons">
+                    ${task.status === "paused" ? `<button class="btn-resume" data-action="resume">Resume Task</button>` : ''}
+                    <button class="btn-edit" data-action="edit">Edit Task</button>
+                    ${task.status !== "completed" ? `<button class="btn-completed" data-action="complete">Complete Task</button>` : ''}
+                    <button class="btn-delete" data-action="delete">Delete Task</button>
+                </div>
+            </div>
         </div>
     `;
+    
+    document.body.appendChild(modalElement);
+    
+    // Add event listeners
+    const closeBtn = modalElement.querySelector(".close");
+    closeBtn.addEventListener("click", () => {
+        modalElement.remove();
+    });
 
-    modal.style.display = 'flex';
-    container.querySelector('.close').onclick = () => (modal.style.display = 'none');
-    if(task.status === 'paused') container.querySelector('#btnResume').onclick = () => resume(task.id);
-    container.querySelector('#btnEdit').onclick = () => edit(task.id);
-    if(task.status !== 'completed') container.querySelector('#btnComplete').onclick = () => complete(task.id);
-    container.querySelector('#btnDelete').onclick = () => del(task.id);
+    // Add click outside modal to close
+    modalElement.addEventListener("click", (e) => {
+        if (e.target === modalElement) {
+            modalElement.remove();
+        }
+    });
+
+    // Add action button event listeners
+    const actionButtons = modalElement.querySelectorAll("[data-action]");
+    actionButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const action = button.getAttribute("data-action");
+            
+            switch(action) {
+                case "resume":
+                    if (actions.resume) actions.resume();
+                    break;
+                case "edit":
+                    if (actions.edit) {
+                        editTask(task.id, actions.edit);
+                    }
+                    break;
+                case "complete":
+                    if (actions.complete) actions.complete();
+                    break;
+                case "delete":
+                    if (actions.del) actions.del();
+                    break;
+            }
+            
+            modalElement.remove();
+        });
+    });
+    
+    // Show the modal
+    modalElement.style.display = "flex";
 }
 
-export function editTask(taskId){
-
-     
-    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const task = tasks.find(t => t.id === taskId); 
+// Helper function for editing tasks
+function editTask(taskId, onSave) {
+    const task = taskService.getTaskById(taskId);
     
-    if (!task) return;
+    if (!task) {
+        console.error("Task not found for editing:", taskId);
+        return;
+    }
+    
+    console.log("Editing task:", task);
     
     const editForm = document.createElement("div");
     editForm.classList.add("modal");
@@ -218,7 +344,7 @@ export function editTask(taskId){
             
                 <div class="form-group">
                     <label for="editTargetDate">Target Completion Date</label>
-                    <input type="date" id="editTargetDate" value="${task.targetDate}" required>
+                    <input type="date" id="editTargetDate" value="${task.targetDate || ''}" required>
                 </div>
                 
                 <div class="form-group">
@@ -246,8 +372,83 @@ export function editTask(taskId){
     });
 
     editForm.querySelector("#saveTaskBtn").addEventListener("click", () => {
-        updateTaskData(taskId, editForm);
+        // PRESERVE ALL EXISTING TASK DATA
+        const updatedData = {
+            ...task, // Keep all existing properties
+            // Only update the fields that were edited
+            name: editForm.querySelector("#editTaskName").value.trim(),
+            priority: editForm.querySelector("#editPriority").value,
+            tag: editForm.querySelector("#editTag").value.trim(),
+            status: editForm.querySelector("#editStatus").value,
+            targetDate: editForm.querySelector("#editTargetDate").value,
+            details: editForm.querySelector("#editDetails").value.trim()
+        };
+        
+        console.log("Saving updated task data:", updatedData);
+        console.log("Original task:", task);
+        
+        if (onSave) {
+            onSave(updatedData);
+        }
+        
         editForm.remove();
     });
+}
 
+// Function to update the ongoing task display
+export function setOngoingTask(task){
+    if (!task) return;
+    
+    const displayMap = {
+        "displayTaskName": task.name,
+        "displayTag": task.tag,
+        "displayPriority": task.priority,
+        "displayStartDate": task.startDate,
+        "displayStatus": task.status,
+        "displayTargetTime": task.targetDate
+    };
+    
+    for (const [id, value] of Object.entries(displayMap)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    const activePanel = document.getElementById("activeTaskPanel");
+    const noActivePanel = document.getElementById("noActiveTaskPanel");
+    
+    if (activePanel) {
+        activePanel.classList.remove("hidden");
+    }
+    
+    if (noActivePanel) {
+        noActivePanel.classList.add("hidden");
+    }
+}
+
+// Function to clear the ongoing task display
+export function clearOngoingTaskDisplay(){
+    const displayElements = [
+        "displayTaskName", "displayTag", "displayPriority", 
+        "displayStartDate", "displayStatus", "displayTargetTime"
+    ];
+    
+    displayElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = " -- ";
+        }
+    });
+
+    const activePanel = document.getElementById("activeTaskPanel");
+    const noActivePanel = document.getElementById("noActiveTaskPanel");
+    
+    if (activePanel) {
+        activePanel.classList.add("hidden");
+    }
+    
+    if (noActivePanel) {
+        noActivePanel.classList.remove("hidden");
+    }
 }

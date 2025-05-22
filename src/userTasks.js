@@ -12,7 +12,7 @@ export function initializeUserTasks(email){
     // Removed initializing generic 'tasks' key
 }
 
-// Added a function to save tasks for a specific user
+
 export function saveUserTasks(email, tasks) {
     const userKey = `tasks_${email}`;
     localStorage.setItem(userKey, JSON.stringify(tasks));

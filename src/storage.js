@@ -1,5 +1,5 @@
 import { addTimes } from "./utils/timeUtils.js";
-import { getCurrentUser } from "./services/authService.js"; // Import getCurrentUser
+import { getCurrentUser } from "./services/authService.js"; 
 
 export function saveItem(key, data){
     localStorage.setItem(key, JSON.stringify(data));
@@ -7,8 +7,11 @@ export function saveItem(key, data){
 
 export function loadItem(key){
     try{
-        return JSON.parse(localStorage.getItem(key));
-    }catch{
+        const data = localStorage.getItem(key);
+        console.log(`Loading item with key "${key}":`, data);
+        return JSON.parse(data);
+    }catch(e){
+        console.error(`Error loading item with key "${key}":`, e);
         return null;
     }
 }
@@ -17,13 +20,12 @@ export function removeItem(key){
     localStorage.removeItem(key);
 }
 
-// Modified saveTasks to accept email
+
 export function saveTasks(email, tasks){
     const userKey = `tasks_${email}`;
     saveItem(userKey, tasks);
 }
 
-// Modified loadTasks to accept email
 export function loadTasks(email){
     const userKey = `tasks_${email}`;
     return loadItem(userKey) || [];
@@ -42,8 +44,8 @@ export function removeActiveTaskId(){
 }
 
 export function saveTimerState(task){
-    const currentUser = getCurrentUser(); // Get current user
-    if (!task || !currentUser) return; // Check if user exists
+    const currentUser = getCurrentUser(); 
+    if (!task || !currentUser) return; 
 
     const timerValue = document.getElementById("timer").textContent;
 
@@ -63,19 +65,35 @@ export function saveTimerState(task){
         task.timeTaken = addTimes(task.timeTaken, timerValue);
     }
 
-    const tasks = loadTasks(currentUser.email); // Load tasks for current user
+    const tasks = loadTasks(currentUser.email); 
     const idx = tasks.findIndex(t => t.id === task.id);
     if(idx !== -1){
         tasks[idx] = task;
-        saveTasks(currentUser.email, tasks); // Save tasks for current user
+        saveTasks(currentUser.email, tasks); 
     }
 }
 
-export function updateTaskCounters(totalTimeElement){
-    const currentUser = getCurrentUser(); // Get current user
-    if (!currentUser) return; // Check if user exists
+// Function to load the timer state for a given task
+export function loadTimerStateForTask(task) {
+    if (!task || !task.timeTaken || task.timeTaken === "00:00:00") {
+        return { hours: 0, minutes: 0, seconds: 0 };
+    }
 
-    const tasks = loadTasks(currentUser.email); // Load tasks for current user
+    // Assuming timeTaken is in "HH:MM:SS" format
+    const [hoursStr, minutesStr, secondsStr] = task.timeTaken.split(':');
+    const hours = parseInt(hoursStr, 10) || 0;
+    const minutes = parseInt(minutesStr, 10) || 0;
+    const seconds = parseInt(secondsStr, 10) || 0;
+
+    return { hours, minutes, seconds };
+}
+
+
+export function updateTaskCounters(totalTimeElement){
+    const currentUser = getCurrentUser();
+    if (!currentUser) return;
+
+    const tasks = loadTasks(currentUser.email);
     const timerStack = [];
     let totalTime = 0;
     const totalCount = tasks.length;
@@ -121,52 +139,3 @@ export function updateTaskCounters(totalTimeElement){
     if (completedCountElement) completedCountElement.textContent = completedCount;
     if (pausedCountElement) pausedCountElement.textContent = pausedCount;
 }
-
-
-// export function renderPausedTaskTable(){
-//     const pausedTableBody = document.getElementById('pausedTaskTableBody');
-//     if(!pausedTableBody) return;
-
-//     pausedTableBody.innerHTML = "";
-
-//     const tasks = JSON.parse(localStorage.getItem("tasks")) || []; // This still uses generic key
-//     const pausedTasks = tasks.filter(t => t.status === "paused");
-
-//     pausedTasks.forEach(task => {
-
-//         const row = document.createElement("tr");
-//         const timeFragmentsHtml = formatTimeFragment(task.timeFragments);
-
-//         row.innerHTML = `
-
-//             <td>${task.name}</td>
-//             <td><span class="priority-badge priority-${task.priority}">${task.priority}</span></td>
-//             <td><span class="tag-badge">${task.tag}</span></td>
-//             <td>${task.startDate}</td>
-//             <td>${task.targetDate || "--"}</td>
-//             <td>${task.timeTaken || "00:00:00"}</td>
-//             <td>${timeFragmentsHtml}</td>
-//             <td>
-//                 <button class="action-btn more-btn" onclick="showDetailsModal('${task.id}')">More</button>
-//             </td>
-//         `;
-
-//         pausedTableBody.appendChild(row);
-//     });
-// }
-
-
-
-// function addTimes(time1, time2){
-//     const [hours1, minutes1, seconds1] = time1.split(':').map(Number);
-//     const [hours2, minutes2, seconds2] = time2.split(':').map(Number);
-
-//     let totalSeconds = seconds1 + seconds2;
-//     let totalMinutes = minutes1 + minutes2 + Math.floor(totalSeconds / 60);
-//     totalSeconds %= 60;
-
-//     let totalHours = hours1 + hours2 + Math.floor(totalMinutes / 60);
-//     totalMinutes %= 60;
-
-//     return `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-// }

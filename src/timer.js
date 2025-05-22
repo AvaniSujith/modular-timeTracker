@@ -71,6 +71,13 @@ export function updateTimerDisplay(){
         `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+export function setTimerState(h, m, s) {
+    hours = h;
+    minutes = m;
+    seconds = s;
+    updateTimerDisplay(); // Update display immediately after setting state
+}
+
 
 export function resetTimerDisplay(){
     seconds = 0; 

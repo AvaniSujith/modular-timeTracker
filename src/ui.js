@@ -1,6 +1,7 @@
 
-import { renderCompletedTable, renderPausedTable } from "./views/taskView.js";
+import { renderCompletedTable, renderPausedTable } from "./views/taskView.js"; // Keep imports for now, might be used elsewhere
 import { createGraph } from "./analytics.js";
+import { renderTables } from "./controllers/taskController.js"; // Import renderTables
 
 export function handlingNavLinks(){
     const navLinks = document.querySelectorAll('.nav-link[data-page]');
@@ -26,11 +27,11 @@ export function handlingNavLinks(){
 
             // Call rendering functions based on the target page
             if(targetPage === 'works-done'){
-                renderCompletedTable();
+                renderTables(); // Call renderTables to fetch and display data
             } else if(targetPage === 'analytics'){
                 setTimeout(createGraph, 100);
             } else if(targetPage === 'dashboard') {
-                renderPausedTable();
+                renderTables(); // Call renderTables to fetch and display data
             }
         });
     });

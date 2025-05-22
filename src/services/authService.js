@@ -62,14 +62,8 @@ export function login(email, password){
 
     if(!user) return null;
     localStorage.setItem('currentUser', JSON.stringify(user));
-    // Assuming loadUserTasks now returns the tasks and doesn't save to generic key
-    // The taskService will handle loading tasks for the current user after login.
-    // No need to call loadUserTasks here anymore as it's handled by taskService on initialization/load.
-    // loadUserTasks(email); // Removed this call
 
     return user;
-
-    return user;  
 }
 
 export function logout(){
@@ -78,7 +72,9 @@ export function logout(){
 
 export function getCurrentUser(){
     try{
-        return JSON.parse(localStorage.getItem('currentUser')) || null;
+        const user = JSON.parse(localStorage.getItem('currentUser')) || null;
+        console.log("getCurrentUser: ", user);
+        return user;
     }catch(e){
         console.error('Failed to load currentUser from local Storage', e)
         return null;

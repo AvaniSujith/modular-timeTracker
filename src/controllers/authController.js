@@ -1,7 +1,9 @@
 // import * as authService from '../services/authService.js';
 // import * as authView from '../views/authView.js';
 import { initAuthUI, showError, showLogoutButton } from '../views/authView.js';
-import { login, signup } from '../services/authService.js';
+import { login, signup, logout } from '../services/authService.js'; // Import logout
+import { getActiveTask } from '../services/taskService.js'; // Import getActiveTask
+import { pauseActiveTask } from './taskController.js'; // Import pauseActiveTask
 
 export function initAuth(){
         initAuthUI({
@@ -14,7 +16,6 @@ export function initAuth(){
                     return;
                 }
 
-                // Hide login page and show protected content
                 const mainSidebar = document.querySelector('.sidebar-aside');
                 const mainNav = document.querySelector('.main-nav');
                 const loginPage = document.getElementById('login-page');
@@ -38,8 +39,6 @@ export function initAuth(){
                     return;
                 }
 
-                // After successful signup, directly switch visibility
-                // Removed redundant login call
                 const mainSidebar = document.querySelector('.sidebar-aside');
                 const mainNav = document.querySelector('.main-nav');
                 const loginPage = document.getElementById('login-page');
@@ -58,8 +57,13 @@ export function initAuth(){
         });
 
         showLogoutButton(() => {
-          logout();
-          // After logout, hide protected content and show login page
+            // Pause active task before logging out
+            const activeTask = getActiveTask();
+            if (activeTask) {
+                pauseActiveTask();
+            }
+
+            logout();
             const mainSidebar = document.querySelector('.sidebar-aside');
             const mainNav = document.querySelector('.main-nav');
             const loginPage = document.getElementById('login-page');
