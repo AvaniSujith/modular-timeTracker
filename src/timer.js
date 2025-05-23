@@ -86,3 +86,14 @@ export function resetTimerDisplay(){
 
     timerDisplay.textContent = "00:00:00";
 }
+
+
+export function getCurrentTime(){
+    
+    const timerDisplay = document.getElementById('timerDisplay');
+    if(timerDisplay){
+        return timerDisplay.textContent || "00:00:00"
+    }
+
+    return "00:00:00"
+}

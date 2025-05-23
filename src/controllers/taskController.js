@@ -1,8 +1,9 @@
+
 import * as taskService from '../services/taskService.js';
 import * as taskView from '../views/taskView.js';
 import { setActiveTask, getActiveTaskId, clearActiveTask, getTaskById } from '../services/taskService.js';
-import { setOngoingTask, clearOngoingTaskDisplay } from '../views/taskView.js';
-import { timerStart, timerPause, timerEnd, resetTimerDisplay, setTimerState } from '../timer.js';
+import { setOngoingTask, clearOngoingTaskDisplay, updateDashboardStatus} from '../views/taskView.js';
+import { timerStart, timerPause, timerEnd, resetTimerDisplay, setTimerState, getCurrentTime } from '../timer.js';
 import { saveTimerState, loadTimerStateForTask } from '../storage.js';
 
 let startTimerBtn;
@@ -10,17 +11,17 @@ let pauseTimerBtn;
 let endTimerBtn;
 let addTaskBtn;
 
-// Helper function to update the state of timer control buttons
+
 function updateTimerButtonState(hasActiveTask, isPaused = false) {
     if (startTimerBtn && pauseTimerBtn && endTimerBtn) {
         if (hasActiveTask) {
-            startTimerBtn.disabled = !isPaused; // Enable start only if paused
-            pauseTimerBtn.disabled = isPaused; // Disable pause if paused
-            endTimerBtn.disabled = false; // End is always enabled with an active task
+            startTimerBtn.disabled = !isPaused;
+            pauseTimerBtn.disabled = isPaused; 
+            endTimerBtn.disabled = false;
         } else {
-            startTimerBtn.disabled = true; // Disable start if no active task
-            pauseTimerBtn.disabled = true; // Disable pause if no active task
-            endTimerBtn.disabled = true; // Disable end if no active task
+            startTimerBtn.disabled = true; 
+            pauseTimerBtn.disabled = true; 
+            endTimerBtn.disabled = true;
         }
     }
 }
@@ -33,171 +34,288 @@ function updateAddTaskButtonState(hasActiveTask) {
 
 export function renderTables(){
     const tasks = taskService.getTasks();
+
     console.log("renderTables: Tasks fetched from taskService.getTasks():", tasks);
+
     const paused = tasks.filter(t => t.status === 'paused');
     const completed = tasks.filter(t => t.status === 'completed');
 
     taskView.renderPausedTable(paused, handleMoreClick);
     taskView.renderCompletedTable(completed, handleMoreClick);
+
+    updateDashboardStatus();
 }
 
-// THIS IS THE MISSING FUNCTION
+
 function handleMoreClick(taskId){
     console.log("handleMoreClick called with taskId:", taskId);
     
     taskView.showDetailsModal(taskId, {
         resume: () => {
+
             console.log("Resume action for task:", taskId);
+
+            const currentActiveId = getActiveTaskId();
+            if(currentActiveId && currentActiveId !== taskId){
+                const currentTime = getCurrentTime();
+                if(currentTime !== "00:00:00"){
+                    taskService.updateTaskTime(currentActiveId, currentTime);
+                }
+                timerPause();
+            }
+
             taskService.resumeTask(taskId);
             const resumedTask = taskService.getTaskById(taskId);
+
             if (resumedTask) {
                 setOngoingTask(resumedTask);
                 const { hours, minutes, seconds } = loadTimerStateForTask(resumedTask);
                 setTimerState(hours, minutes, seconds);
                 timerStart();
-                updateTimerButtonState(true, false); // Task is ongoing, not paused
-                updateAddTaskButtonState(true); // Disable Add Task
+                updateTimerButtonState(true, false);
+                updateAddTaskButtonState(true); 
             }
             renderTables();
         },
+
         edit : (updatedData) => {
+            
             console.log("Edit action called with:", updatedData);
             
             const oldTask = taskService.getTaskById(taskId);
             console.log("Old task before update:", oldTask);
             
-            // CRITICAL: Use the complete updatedData that preserves all fields
-            taskService.updateTask(updatedData);
-            
-            const updatedTask = taskService.getTaskById(taskId);
+            const updatedTask = taskService.updateTask(updatedData);
             console.log("Updated task after save:", updatedTask);
 
-            // Handle status changes
+            if(!updatedTask){
+                console.error("failed to update Task");
+                return;
+            }
+
+            
             if (oldTask && oldTask.status !== updatedTask.status) {
                 if (oldTask.status === 'ongoing') {
+
+                    const currentTime = getCurrentTime();
+                    if(currentTime !== "00:00:00"){
+                        taskService.updateTaskTime(taskId, currentTime);
+                    }
+
                     timerPause();
                     clearOngoingTaskDisplay();
                     clearActiveTask();
+                    resetTimerDisplay();
                     updateTimerButtonState(false);
                     updateAddTaskButtonState(false);
                 }
 
                 if (updatedTask.status === 'ongoing') {
-                    // Pause any other ongoing task first
+                    
                     const tasks = taskService.getTasks();
                     const otherOngoing = tasks.find(t => t.id !== taskId && t.status === 'ongoing');
-                    if (otherOngoing) {
-                        saveTimerState(otherOngoing);
+                    
+                    if(otherOngoing){
+                        const currentTime = getCurrentTime();
+                        if(currentTime !== "00:00:00"){
+                            taskService.updateTaskTime(otherOngoing.id, currentTime);
+                        }
+
+                        // saveTimerState(otherOngoing);
                         otherOngoing.status = 'paused';
                         taskService.updateTask(otherOngoing);
                     }
                     
                     setActiveTask(updatedTask.id);
                     setOngoingTask(updatedTask);
+                    const { hours, minutes, seconds } = loadTimerStateForTask(updatedTask);
+                    setTimerState(hours, minutes, seconds);
                     timerStart();
                     updateTimerButtonState(true, false);
                     updateAddTaskButtonState(true);
-                } else if (updatedTask.status === 'completed' && !updatedTask.endDate) {
-                    // Set end date if completed
+
+                }else if(updatedTask.status === 'completed' && !updatedTask.endDate) {
+                    
                     updatedTask.endDate = new Date().toISOString().split("T")[0];
                     taskService.updateTask(updatedTask);
                 }
             } else if (updatedTask.status === 'ongoing') {
-                // If status is still ongoing, update the display
+                
                 setOngoingTask(updatedTask);
+
             }
 
             renderTables();
         },
+
         complete : () => {
             console.log("Complete action for task:", taskId);
             const wasActive = getActiveTaskId() === taskId;
-            taskService.completeTask(taskId);
+            // taskService.completeTask(taskId);
+
             if (wasActive) {
+                const currentTime = getCurrentTime();
+                if(currentTime !== "00:00:00"){
+                    taskService.updateTaskTime(taskId, currentTime);
+                }
+
                 clearOngoingTaskDisplay();
                 timerEnd();
+                resetTimerDisplay();
                 updateTimerButtonState(false);
                 updateAddTaskButtonState(false);
             }
+
+            taskService.completeTask(taskId);
             renderTables();
         },
+
         del : () => {
             console.log("Delete action for task:", taskId);
             const wasActive = getActiveTaskId() === taskId;
-            taskService.deleteTask(taskId);
+
+            // taskService.deleteTask(taskId);
             if (wasActive) {
                 clearOngoingTaskDisplay();
                 timerEnd();
+                resetTimerDisplay();
                 updateTimerButtonState(false);
                 updateAddTaskButtonState(false);
             }
+
+            taskService.deleteTask(taskId);
             renderTables();
         }
     });
 }
 
-// Modified initTaskController to accept button elements and set initial state
+
 export function initTaskController(timerBtns, addBtn) {
     startTimerBtn = timerBtns.startBtn;
     pauseTimerBtn = timerBtns.pauseBtn;
     endTimerBtn = timerBtns.endBtn;
     addTaskBtn = addBtn;
 
-    // Set initial state based on whether there's an active task
+    
     const activeTaskId = getActiveTaskId();
     if (activeTaskId) {
         const activeTask = getTaskById(activeTaskId);
-        if (activeTask) {
+        if (activeTask && activeTask.status === 'ongoing') {
             setOngoingTask(activeTask);
             const { hours, minutes, seconds } = loadTimerStateForTask(activeTask);
             setTimerState(hours, minutes, seconds);
             timerStart();
-            updateTimerButtonState(true, activeTask.status === 'paused');
+            updateTimerButtonState(true, false);
             updateAddTaskButtonState(true);
+
+        }else if(activeTask && activeTask.status === 'paused'){
+            setOngoingTask(activeTask);
+            const { hours, minutes, seconds } = loadTimerStateForTask(activeTask);
+            setTimerState(hours, minutes, seconds);
+            updateTimerButtonState(true, true);
+            updateAddTaskButtonState(true);
+        
         } else {
-            // Handle case where active task ID exists but task data is missing
+            
             clearActiveTask();
+            clearOngoingTaskDisplay();
             resetTimerDisplay();
             updateTimerButtonState(false);
             updateAddTaskButtonState(false);
         }
     } else {
+        clearOngoingTaskDisplay();
         resetTimerDisplay();
         updateTimerButtonState(false);
         updateAddTaskButtonState(false);
     }
 
-    // Add Task button event listener
-    document.getElementById('addTaskBtn').addEventListener('click', () => {
-        taskView.showNewTaskModal((formData) => {
-            console.log("New task form data:", formData);
-            const newTask = taskService.addTask(formData);
-            console.log("New task created:", newTask);
 
-            if (newTask && newTask.status === 'ongoing') {
-                setActiveTask(newTask.id);
-                setOngoingTask(newTask);
-                timerStart();
-                updateTimerButtonState(true);
-                updateAddTaskButtonState(true);
-            }
+    // document.getElementById('addTaskBtn').addEventListener('click', () => {
+    //     taskView.showNewTaskModal((formData) => {
+    //         console.log("New task form data:", formData);
+    //         const newTask = taskService.addTask(formData);
+    //         console.log("New task created:", newTask);
 
-            renderTables();
+    //         if (newTask && newTask.status === 'ongoing') {
+    //             setActiveTask(newTask.id);
+    //             setOngoingTask(newTask);
+    //             timerStart();
+    //             updateTimerButtonState(true);
+    //             updateAddTaskButtonState(true);
+    //         }
+
+    //         renderTables();
+    //     });
+    // });
+
+    // renderTables();
+
+    const addTaskButton = document.getElementById('addTaskBtn');
+    if(addTaskButton){
+        addTaskButton.addEventListener('click', ()=>{
+            taskView.showNewTaskModal((formData) => {
+                console.log("new task form data", formData);
+
+                const currentActiveId = getActiveTaskId();
+                if(currentActiveId){
+                    const currentTime = getCurrentTime();
+                    if(currentTime !== "00:00:00"){
+                        taskService.updateTaskTime(currentActiveId, currentTime);
+                    }
+
+                    const currentTask = getTaskById(currentActiveId);
+                    if(currentTask){
+                        currentTask.status = 'paused';
+                        taskService.updateTask(currentTask);
+                    }
+
+                    timerPause();
+                    clearActiveTask();
+
+                }
+
+
+                const newTask = taskService.addTask(formData);
+                console.log("new task created", newTask);
+
+                if(newTask && newTask.status === 'ongoing'){
+                    setActiveTask(newTask.id);
+                    setOngoingTask(newTask);
+                    resetTimerDisplay();
+                    timerStart();
+                    updateTimerButtonState(true, false);
+                    updateAddTaskButtonState(true);
+                }else{
+                    resetTimerDisplay();
+                    updateTimerButtonState(false);
+                    updateAddTaskButtonState(false);
+                }
+
+                renderTables();
+            });
         });
-    });
+    }
 
     renderTables();
+
+    updateDashboardStatus();
 }
 
-// Function to pause the currently active task
+
 export function pauseActiveTask() {
     const activeTaskId = getActiveTaskId();
     if (!activeTaskId) return;
 
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
-        saveTimerState(activeTask);
 
+        const currentTime = getCurrentTime();
+        if(currentTime !== "00:00:00"){
+            taskService.updateTaskTime(activeTaskId, currentTime);
+        }
+
+        saveTimerState(activeTask);
         activeTask.status = 'paused';
         taskService.updateTask(activeTask);
 
@@ -205,22 +323,28 @@ export function pauseActiveTask() {
         clearOngoingTaskDisplay();
         clearActiveTask();
 
-        updateTimerButtonState(true, true); // Task is paused: enable start/end, disable pause
-        updateAddTaskButtonState(false); // Enable Add Task
+        updateTimerButtonState(true, true); 
+        updateAddTaskButtonState(false);
 
         renderTables();
+
+        updateDashboardStatus();
     }
 }
 
-// Function to complete the currently active task
 export function completeActiveTask() {
     const activeTaskId = getActiveTaskId();
     if (!activeTaskId) return;
 
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
-        saveTimerState(activeTask);
 
+        const currentTime = getCurrentTime();
+        if(currentTime !== "00:00:00"){
+            taskService.updateTaskTime(activeTaskId, currentTime);
+        }
+
+        saveTimerState(activeTask);
         activeTask.status = 'completed';
         activeTask.endDate = new Date().toISOString().split("T")[0];
         taskService.updateTask(activeTask);
@@ -228,10 +352,13 @@ export function completeActiveTask() {
         timerEnd();
         clearOngoingTaskDisplay();
         clearActiveTask();
+        resetTimerDisplay();
 
         updateTimerButtonState(false);
         updateAddTaskButtonState(false);
 
         renderTables();
+        updateDashboardStatus();
+
     }
 }

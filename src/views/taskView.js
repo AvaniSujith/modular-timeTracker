@@ -1,3 +1,4 @@
+//taskView
 import { todayISO } from "../utils/dateUtils.js";
 import { formatTimeFragment } from "../utils/timeUtils.js";
 import * as taskService from '../services/taskService.js';
@@ -452,3 +453,30 @@ export function clearOngoingTaskDisplay(){
         noActivePanel.classList.remove("hidden");
     }
 }
+
+export function updateDashboardStatus(){
+    const status = taskService.getDashboardStatus();
+
+    const timeElement = document.querySelectorAll('#time-total');
+    const pausedElement = document.querySelectorAll('#paused-count');
+    const completedElement = document.querySelectorAll('#completed-count');
+    const totalElement = document.querySelectorAll('#total-count');
+
+    timeElement.forEach(el => {
+        if(el) el.textContent = status.totalHours;
+
+    });
+
+    pausedElement.forEach(el => {
+        if(el) el.textContent = status.pausedCount;
+    });
+
+    completedElement.forEach(el => {
+        if(el) el.textContent = status.completedCount;
+    });
+
+    totalElement.forEach(el => {
+        if(el) el.textContent = status.totalCount;
+    });
+}
+
