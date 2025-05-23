@@ -169,14 +169,12 @@ export function addTimeFragment(taskId, duration, date = todayISO()){
     });
 
     updateTotalTime(task);
-
     saveTasks(tasks);
     console.log("addTimeFragment result", task);
     return task;
 }
 
 function updateTotalTime(task){
-
 
     const totalSeconds = calculateTotalSeconds(task.timeFragments);
     task.totalSeconds = totalSeconds;
@@ -216,12 +214,8 @@ export function getDashboardStatus(){
 
 
     let totalSeconds = 0;
+
     tasks.forEach(task => {
-        // if(task.totalSeconds){
-        //     totalSeconds += task.totalSeconds;
-        // }else{
-        //     totalSeconds += calculateTotalSeconds(task.timeFragments);
-        // }
         const taskSeconds = calculateTotalSeconds(task.timeFragments || []);
         totalSeconds += taskSeconds;
 
@@ -231,15 +225,28 @@ export function getDashboardStatus(){
         }
     });
 
-    const totalHours = Math.floor(totalSeconds / 3600);
+    saveTasks(tasks);
 
-    console.log("getDashborad - total seconds", totalSeconds, "total hours", totalHours);
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const remainingSeconds = totalSeconds % 60;
+
+    let displayHours;
+    if (totalSeconds === 0) {
+        displayHours = 0;
+    } else if (totalMinutes > 0 || remainingSeconds > 0) {
+        displayHours = parseFloat((totalSeconds / 3600).toFixed(1));
+    } else {
+        displayHours = totalHours;
+    }
+
+    console.log("getDashboard - total seconds", totalSeconds, "total hours", displayHours);
 
     return{
         pausedCount,
         completedCount,
         totalCount,
-        totalHours
+        totalHours: displayHours
     };
 
 }
@@ -252,9 +259,6 @@ function calculateTotalSeconds(timeFragments){
 
     let totalSeconds = 0;
     timeFragments.forEach(fragment => {
-        // const [hr, min, sec] = fragment.duration.split(":").map(Number);
-        // totalSeconds += hr * 3600 + min * 60 + sec;
-
         if(fragment.duration && typeof fragment.duration === 'string'){
             const parts = fragment.duration.split(":").map(Number);
 
@@ -266,5 +270,5 @@ function calculateTotalSeconds(timeFragments){
         }
     });
 
-    return totalSeconds;
+    return totalSeconds; 
 }
