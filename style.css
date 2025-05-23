@@ -17,7 +17,7 @@
 
   /* #login-page .main-nav{
     display: none;
-  } */ 
+  } */
 
   .search-bar{
     display: none;
@@ -1761,7 +1761,7 @@
     width: 100%;
     height: 400px;
     margin-top: 20px;
-    overflow-x: auto; 
+    overflow-x: auto; /* Add scroll for wide graphs */
   }
 
   .grid{
@@ -1769,7 +1769,7 @@
     height: 100%;
     display: grid;
     border: 1px solid #ccc;
-    grid-auto-flow: column;
+    grid-auto-flow: column; /* Arrange items in columns first */
   }
 
   .cell{
@@ -1779,18 +1779,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-size: 12px; /* Adjust font size for labels */
     color: #333;
   }
 
   .y-label {
-    justify-content: flex-end;
+    justify-content: flex-end; /* Align y-labels to the right */
     padding-right: 8px;
     font-weight: 600;
   }
 
   .x-label {
-    writing-mode: vertical-rl; 
+    /* text-align: rotate(90deg); */
+    writing-mode: vertical-rl; /* Rotate x-labels */
     text-orientation: mixed;
     font-weight: 600;
   }
@@ -2116,11 +2117,14 @@
 
   }
 
+
+
   @media screen and (max-width: 320px){
     
     .form-container{
       width: 280px;
     }
+
 
     .signup-form{
       width:75% ;

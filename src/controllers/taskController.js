@@ -1,4 +1,4 @@
-//taskCotnroller
+
 import * as taskService from '../services/taskService.js';
 import * as taskView from '../views/taskView.js';
 import { setActiveTask, getActiveTaskId, clearActiveTask, getTaskById } from '../services/taskService.js';
@@ -11,7 +11,6 @@ let pauseTimerBtn;
 let endTimerBtn;
 let addTaskBtn;
 
-let sessionStartTime = null;
 
 function updateTimerButtonState(hasActiveTask, isPaused = false) {
     if (startTimerBtn && pauseTimerBtn && endTimerBtn) {
@@ -33,34 +32,10 @@ function updateAddTaskButtonState(hasActiveTask) {
     }
 }
 
-function getSessionDuration(){
-    if(!sessionStartTime) return "00:00:00";
-
-    const now = Date.now();
-    const durationMs = now - sessionStartTime;
-    const totalSeconds = Math.floor(durationMs / 1000);
-
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function saveCurrentSessionTime(taskId){
-    if(sessionStartTime){
-        const sessionDuration = getSessionDuration();
-        if(sessionDuration !== "00:00:00"){
-            taskService.updateTaskTime(taskId, sessionDuration)
-        }
-        sessionStartTime = null;
-    }
-}
-
 export function renderTables(){
     const tasks = taskService.getTasks();
 
-    console.log("renderTables:", tasks);
+    console.log("renderTables: Tasks fetched from taskService.getTasks():", tasks);
 
     const paused = tasks.filter(t => t.status === 'paused');
     const completed = tasks.filter(t => t.status === 'completed');
@@ -82,13 +57,11 @@ function handleMoreClick(taskId){
 
             const currentActiveId = getActiveTaskId();
             if(currentActiveId && currentActiveId !== taskId){
-                // const currentTime = getCurrentTime();
-                // if(currentTime !== "00:00:00"){
-                //     taskService.updateTaskTime(currentActiveId, currentTime);
-                // }
-                saveCurrentSessionTime(currentActiveId);
+                const currentTime = getCurrentTime();
+                if(currentTime !== "00:00:00"){
+                    taskService.updateTaskTime(currentActiveId, currentTime);
+                }
                 timerPause();
-                resetTimerDisplay();
             }
 
             taskService.resumeTask(taskId);
@@ -98,7 +71,6 @@ function handleMoreClick(taskId){
                 setOngoingTask(resumedTask);
                 const { hours, minutes, seconds } = loadTimerStateForTask(resumedTask);
                 setTimerState(hours, minutes, seconds);
-                sessionStartTime = Date.now();
                 timerStart();
                 updateTimerButtonState(true, false);
                 updateAddTaskButtonState(true); 
@@ -125,12 +97,10 @@ function handleMoreClick(taskId){
             if (oldTask && oldTask.status !== updatedTask.status) {
                 if (oldTask.status === 'ongoing') {
 
-                    // const currentTime = getCurrentTime();
-                    // if(currentTime !== "00:00:00"){
-                    //     taskService.updateTaskTime(taskId, currentTime);
-                    // }
-
-                    saveCurrentSessionTime(taskId);
+                    const currentTime = getCurrentTime();
+                    if(currentTime !== "00:00:00"){
+                        taskService.updateTaskTime(taskId, currentTime);
+                    }
 
                     timerPause();
                     clearOngoingTaskDisplay();
@@ -146,24 +116,20 @@ function handleMoreClick(taskId){
                     const otherOngoing = tasks.find(t => t.id !== taskId && t.status === 'ongoing');
                     
                     if(otherOngoing){
-                        // const currentTime = getCurrentTime();
-                        // if(currentTime !== "00:00:00"){
-                        //     taskService.updateTaskTime(otherOngoing.id, currentTime);
-                        // }
+                        const currentTime = getCurrentTime();
+                        if(currentTime !== "00:00:00"){
+                            taskService.updateTaskTime(otherOngoing.id, currentTime);
+                        }
 
-                        saveCurrentSessionTime(otherOngoing.id);
                         // saveTimerState(otherOngoing);
                         otherOngoing.status = 'paused';
                         taskService.updateTask(otherOngoing);
-                        resetTimerDisplay();
                     }
                     
                     setActiveTask(updatedTask.id);
                     setOngoingTask(updatedTask);
                     const { hours, minutes, seconds } = loadTimerStateForTask(updatedTask);
                     setTimerState(hours, minutes, seconds);
-                    
-                    sessionStartTime = Date.now();
                     timerStart();
                     updateTimerButtonState(true, false);
                     updateAddTaskButtonState(true);
@@ -188,12 +154,11 @@ function handleMoreClick(taskId){
             // taskService.completeTask(taskId);
 
             if (wasActive) {
-                // const currentTime = getCurrentTime();
-                // if(currentTime !== "00:00:00"){
-                //     taskService.updateTaskTime(taskId, currentTime);
-                // }
+                const currentTime = getCurrentTime();
+                if(currentTime !== "00:00:00"){
+                    taskService.updateTaskTime(taskId, currentTime);
+                }
 
-                sessionStartTime = null;
                 clearOngoingTaskDisplay();
                 timerEnd();
                 resetTimerDisplay();
@@ -211,7 +176,6 @@ function handleMoreClick(taskId){
 
             // taskService.deleteTask(taskId);
             if (wasActive) {
-                sessionStartTime = null;
                 clearOngoingTaskDisplay();
                 timerEnd();
                 resetTimerDisplay();
@@ -240,7 +204,6 @@ export function initTaskController(timerBtns, addBtn) {
             setOngoingTask(activeTask);
             const { hours, minutes, seconds } = loadTimerStateForTask(activeTask);
             setTimerState(hours, minutes, seconds);
-            sessionStartTime = Date.now();
             timerStart();
             updateTimerButtonState(true, false);
             updateAddTaskButtonState(true);
@@ -261,12 +224,32 @@ export function initTaskController(timerBtns, addBtn) {
             updateAddTaskButtonState(false);
         }
     } else {
-        clearActiveTask();
         clearOngoingTaskDisplay();
         resetTimerDisplay();
         updateTimerButtonState(false);
         updateAddTaskButtonState(false);
     }
+
+
+    // document.getElementById('addTaskBtn').addEventListener('click', () => {
+    //     taskView.showNewTaskModal((formData) => {
+    //         console.log("New task form data:", formData);
+    //         const newTask = taskService.addTask(formData);
+    //         console.log("New task created:", newTask);
+
+    //         if (newTask && newTask.status === 'ongoing') {
+    //             setActiveTask(newTask.id);
+    //             setOngoingTask(newTask);
+    //             timerStart();
+    //             updateTimerButtonState(true);
+    //             updateAddTaskButtonState(true);
+    //         }
+
+    //         renderTables();
+    //     });
+    // });
+
+    // renderTables();
 
     const addTaskButton = document.getElementById('addTaskBtn');
     if(addTaskButton){
@@ -276,12 +259,10 @@ export function initTaskController(timerBtns, addBtn) {
 
                 const currentActiveId = getActiveTaskId();
                 if(currentActiveId){
-                    // const currentTime = getCurrentTime();
-                    // if(currentTime !== "00:00:00"){
-                    //     taskService.updateTaskTime(currentActiveId, currentTime);
-                    // }
-
-                    saveCurrentSessionTime(currentActiveId);
+                    const currentTime = getCurrentTime();
+                    if(currentTime !== "00:00:00"){
+                        taskService.updateTaskTime(currentActiveId, currentTime);
+                    }
 
                     const currentTask = getTaskById(currentActiveId);
                     if(currentTask){
@@ -291,7 +272,6 @@ export function initTaskController(timerBtns, addBtn) {
 
                     timerPause();
                     clearActiveTask();
-                    resetTimerDisplay();
 
                 }
 
@@ -303,7 +283,6 @@ export function initTaskController(timerBtns, addBtn) {
                     setActiveTask(newTask.id);
                     setOngoingTask(newTask);
                     resetTimerDisplay();
-                    sessionStartTime = Date.now();
                     timerStart();
                     updateTimerButtonState(true, false);
                     updateAddTaskButtonState(true);
@@ -331,11 +310,10 @@ export function pauseActiveTask() {
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
 
-        // const currentTime = getCurrentTime();
-        // if(currentTime !== "00:00:00"){
-        //     taskService.updateTaskTime(activeTaskId, currentTime);
-        // }
-        saveCurrentSessionTime(activeTaskId);
+        const currentTime = getCurrentTime();
+        if(currentTime !== "00:00:00"){
+            taskService.updateTaskTime(activeTaskId, currentTime);
+        }
 
         saveTimerState(activeTask);
         activeTask.status = 'paused';
@@ -344,9 +322,8 @@ export function pauseActiveTask() {
         timerPause();
         clearOngoingTaskDisplay();
         clearActiveTask();
-        resetTimerDisplay();
 
-        updateTimerButtonState(false); 
+        updateTimerButtonState(true, true); 
         updateAddTaskButtonState(false);
 
         renderTables();
@@ -362,12 +339,10 @@ export function completeActiveTask() {
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
 
-        // const currentTime = getCurrentTime();
-        // if(currentTime !== "00:00:00"){
-        //     taskService.updateTaskTime(activeTaskId, currentTime);
-        // }
-
-        saveCurrentSessionTime(activeTaskId);
+        const currentTime = getCurrentTime();
+        if(currentTime !== "00:00:00"){
+            taskService.updateTaskTime(activeTaskId, currentTime);
+        }
 
         saveTimerState(activeTask);
         activeTask.status = 'completed';
