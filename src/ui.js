@@ -1,20 +1,21 @@
 
-import { renderCompletedTable, renderPausedTable } from "./views/taskView.js";
+import { renderCompletedTable, renderPausedTable } from "./views/taskView.js"; // Keep imports for now, might be used elsewhere
 import { createGraph } from "./analytics.js";
-import { renderTables } from "./controllers/taskController.js"; 
+import { renderTables } from "./controllers/taskController.js"; // Import renderTables
 
 export function handlingNavLinks(){
     const navLinks = document.querySelectorAll('.nav-link[data-page]');
 
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
-            event.preventDefault(); 
+            event.preventDefault(); // Prevent default link behavior
             const targetPage = link.getAttribute('data-page');
 
-            
+            // Remove active class from all nav items and add to the clicked one
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             link.parentElement.classList.add('active');
 
+            // Hide all pages and show the target page
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
@@ -24,13 +25,13 @@ export function handlingNavLinks(){
                 targetPageElement.classList.add('active');
             }
 
-        
+            // Call rendering functions based on the target page
             if(targetPage === 'works-done'){
-                renderTables(); 
+                renderTables(); // Call renderTables to fetch and display data
             } else if(targetPage === 'analytics'){
                 setTimeout(createGraph, 100);
             } else if(targetPage === 'dashboard') {
-                renderTables(); 
+                renderTables(); // Call renderTables to fetch and display data
             }
         });
     });
