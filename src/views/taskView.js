@@ -158,7 +158,6 @@ export function showDetailsModal(taskId, actions = {}){
     console.log("=== showDetailsModal ===");
     console.log("Looking for task ID:", taskId, "Type:", typeof taskId);
     
-    // Use taskService instead of direct localStorage access
     const task = taskService.getTaskById(taskId);
     
     if(!task) {
@@ -169,7 +168,6 @@ export function showDetailsModal(taskId, actions = {}){
 
     console.log("Found task:", task);
 
-    // Remove existing modal if it exists
     const existingModal = document.getElementById("taskDetailsModal");
     if (existingModal) {
         existingModal.remove();
@@ -251,20 +249,17 @@ export function showDetailsModal(taskId, actions = {}){
     
     document.body.appendChild(modalElement);
     
-    // Add event listeners
     const closeBtn = modalElement.querySelector(".close");
     closeBtn.addEventListener("click", () => {
         modalElement.remove();
     });
 
-    // Add click outside modal to close
     modalElement.addEventListener("click", (e) => {
         if (e.target === modalElement) {
             modalElement.remove();
         }
     });
 
-    // Add action button event listeners
     const actionButtons = modalElement.querySelectorAll("[data-action]");
     actionButtons.forEach(button => {
         button.addEventListener("click", () => {
@@ -291,11 +286,9 @@ export function showDetailsModal(taskId, actions = {}){
         });
     });
     
-    // Show the modal
     modalElement.style.display = "flex";
 }
 
-// Helper function for editing tasks
 function editTask(taskId, onSave) {
     const task = taskService.getTaskById(taskId);
     
@@ -373,10 +366,9 @@ function editTask(taskId, onSave) {
     });
 
     editForm.querySelector("#saveTaskBtn").addEventListener("click", () => {
-        // PRESERVE ALL EXISTING TASK DATA
+        
         const updatedData = {
-            ...task, // Keep all existing properties
-            // Only update the fields that were edited
+            ...task, 
             name: editForm.querySelector("#editTaskName").value.trim(),
             priority: editForm.querySelector("#editPriority").value,
             tag: editForm.querySelector("#editTag").value.trim(),
@@ -396,7 +388,6 @@ function editTask(taskId, onSave) {
     });
 }
 
-// Function to update the ongoing task display
 export function setOngoingTask(task){
     if (!task) return;
     
@@ -428,7 +419,6 @@ export function setOngoingTask(task){
     }
 }
 
-// Function to clear the ongoing task display
 export function clearOngoingTaskDisplay(){
     const displayElements = [
         "displayTaskName", "displayTag", "displayPriority", 
@@ -463,7 +453,7 @@ export function updateDashboardStatus(){
     const totalElement = document.querySelectorAll('#total-count');
 
     timeElement.forEach(el => {
-        if(el) el.textContent = status.totalHours;
+        if(el) el.textContent = status.totalTimeFormatted; 
 
     });
 
@@ -479,4 +469,3 @@ export function updateDashboardStatus(){
         if(el) el.textContent = status.totalCount;
     });
 }
-

@@ -75,7 +75,7 @@ export function setTimerState(h, m, s) {
     hours = h;
     minutes = m;
     seconds = s;
-    updateTimerDisplay(); // Update display immediately after setting state
+    updateTimerDisplay(); 
 }
 
 
@@ -90,9 +90,9 @@ export function resetTimerDisplay(){
 
 export function getCurrentTime(){
     
-    const timerDisplay = document.getElementById('timerDisplay');
-    if(timerDisplay){
-        return timerDisplay.textContent || "00:00:00"
+    const timerElement = document.getElementById('timer'); 
+    if(timerElement){
+        return timerElement.textContent || "00:00:00"
     }
 
     return "00:00:00"

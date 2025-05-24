@@ -148,36 +148,7 @@ export function completeTask(id){
     }
 }
 
-
-export function addTimeFragment(taskId, duration, date = todayISO()){
-    console.log("addTimeFragmnt", taskId, duration, date);
-    const tasks = getTasks();
-    const task = tasks.find(t => t.id === taskId);
-
-    if(!task){
-        console.error("addFragment: task not found", taskId);
-        return null;
-    }
-
-    if(!task.timeFragments){
-        task.timeFragments = [];
-    }
-
-    task.timeFragments.push({
-        date: date,
-        duration: duration
-    });
-
-    updateTotalTime(task);
-
-    saveTasks(tasks);
-    console.log("addTimeFragment result", task);
-    return task;
-}
-
-function updateTotalTime(task){
-
-
+export function updateTotalTime(task){
     const totalSeconds = calculateTotalSeconds(task.timeFragments);
     task.totalSeconds = totalSeconds;
 
@@ -193,20 +164,6 @@ function updateTotalTime(task){
     task.timeTaken = `${hr.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
-export function updateTaskTime(taskId, timeSpent){
-    console.log("updatedTaskTime:", taskId, timeSpent);
-    const task = getTaskById(taskId);
-
-    if(!task){
-        console.error("updateTaskTime: task not found", taskId);
-        return null;
-    }
-
-    addTimeFragment(taskId, timeSpent);
-    return task;
-
-}
-
 export function getDashboardStatus(){
     const tasks = getTasks();
 
@@ -217,44 +174,40 @@ export function getDashboardStatus(){
 
     let totalSeconds = 0;
     tasks.forEach(task => {
-        // if(task.totalSeconds){
-        //     totalSeconds += task.totalSeconds;
-        // }else{
-        //     totalSeconds += calculateTotalSeconds(task.timeFragments);
-        // }
-        const taskSeconds = calculateTotalSeconds(task.timeFragments || []);
-        totalSeconds += taskSeconds;
-
-        if(task.totalSeconds !== taskSeconds){
-            task.totalSeconds = taskSeconds;
-            updateTotalTime(task);
-        }
+        totalSeconds += task.totalSeconds || 0;
     });
 
-    const totalHours = Math.floor(totalSeconds / 3600);
+    
+    const totalHoursFormatted = formatSecondsToHHMMSS(totalSeconds);
 
-    console.log("getDashborad - total seconds", totalSeconds, "total hours", totalHours);
+    console.log("getDashborad - total seconds", totalSeconds, "total time formatted", totalHoursFormatted);
 
     return{
         pausedCount,
         completedCount,
         totalCount,
-        totalHours
+        totalTimeFormatted: totalHoursFormatted
     };
 
 }
 
 
-function calculateTotalSeconds(timeFragments){
+function formatSecondsToHHMMSS(totalSeconds) {
+    const hr = Math.floor(totalSeconds / 3600);
+    const min = Math.floor((totalSeconds % 3600) / 60);
+    const sec = totalSeconds % 60;
+
+    return `${hr.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+}
+
+
+export function calculateTotalSeconds(timeFragments){
     if(!timeFragments || timeFragments.length === 0){
         return 0;
     }
 
     let totalSeconds = 0;
     timeFragments.forEach(fragment => {
-        // const [hr, min, sec] = fragment.duration.split(":").map(Number);
-        // totalSeconds += hr * 3600 + min * 60 + sec;
-
         if(fragment.duration && typeof fragment.duration === 'string'){
             const parts = fragment.duration.split(":").map(Number);
 

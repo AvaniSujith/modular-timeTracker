@@ -119,7 +119,7 @@ export function initAuthUI({ login, signup }){
         const email = signInForm.email.value.trim();
         const password = signInForm.password.value.trim();
         console.log('login', email, password);
-        login({ email, password }); // Pass an object with email and password
+        login({ email, password }); 
     });
 
     signUpForm.addEventListener('submit', e => {

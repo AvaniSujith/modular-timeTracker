@@ -1,4 +1,4 @@
-
+//taskController.js
 import * as taskService from '../services/taskService.js';
 import * as taskView from '../views/taskView.js';
 import { setActiveTask, getActiveTaskId, clearActiveTask, getTaskById } from '../services/taskService.js';
@@ -57,14 +57,14 @@ function handleMoreClick(taskId){
 
             const currentActiveId = getActiveTaskId();
             if(currentActiveId && currentActiveId !== taskId){
-                const currentTime = getCurrentTime();
-                if(currentTime !== "00:00:00"){
-                    taskService.updateTaskTime(currentActiveId, currentTime);
+                const currentTask = taskService.getTaskById(currentActiveId);
+                if(currentTask){
+                    saveTimerState(currentTask); 
                 }
                 timerPause();
             }
 
-            taskService.resumeTask(taskId);
+            taskService.resumeTask(taskId); 
             const resumedTask = taskService.getTaskById(taskId);
 
             if (resumedTask) {
@@ -96,11 +96,8 @@ function handleMoreClick(taskId){
             
             if (oldTask && oldTask.status !== updatedTask.status) {
                 if (oldTask.status === 'ongoing') {
-
-                    const currentTime = getCurrentTime();
-                    if(currentTime !== "00:00:00"){
-                        taskService.updateTaskTime(taskId, currentTime);
-                    }
+                    
+                    saveTimerState(oldTask);
 
                     timerPause();
                     clearOngoingTaskDisplay();
@@ -116,17 +113,14 @@ function handleMoreClick(taskId){
                     const otherOngoing = tasks.find(t => t.id !== taskId && t.status === 'ongoing');
                     
                     if(otherOngoing){
-                        const currentTime = getCurrentTime();
-                        if(currentTime !== "00:00:00"){
-                            taskService.updateTaskTime(otherOngoing.id, currentTime);
-                        }
-
-                        // saveTimerState(otherOngoing);
+                        
+                        saveTimerState(otherOngoing);
                         otherOngoing.status = 'paused';
                         taskService.updateTask(otherOngoing);
                     }
                     
                     setActiveTask(updatedTask.id);
+                    
                     setOngoingTask(updatedTask);
                     const { hours, minutes, seconds } = loadTimerStateForTask(updatedTask);
                     setTimerState(hours, minutes, seconds);
@@ -154,9 +148,10 @@ function handleMoreClick(taskId){
             // taskService.completeTask(taskId);
 
             if (wasActive) {
-                const currentTime = getCurrentTime();
-                if(currentTime !== "00:00:00"){
-                    taskService.updateTaskTime(taskId, currentTime);
+                
+                const activeTask = taskService.getTaskById(taskId);
+                if(activeTask){
+                     saveTimerState(activeTask);
                 }
 
                 clearOngoingTaskDisplay();
@@ -166,7 +161,7 @@ function handleMoreClick(taskId){
                 updateAddTaskButtonState(false);
             }
 
-            taskService.completeTask(taskId);
+            taskService.completeTask(taskId); 
             renderTables();
         },
 
@@ -174,8 +169,8 @@ function handleMoreClick(taskId){
             console.log("Delete action for task:", taskId);
             const wasActive = getActiveTaskId() === taskId;
 
-            // taskService.deleteTask(taskId);
             if (wasActive) {
+                
                 clearOngoingTaskDisplay();
                 timerEnd();
                 resetTimerDisplay();
@@ -259,19 +254,15 @@ export function initTaskController(timerBtns, addBtn) {
 
                 const currentActiveId = getActiveTaskId();
                 if(currentActiveId){
-                    const currentTime = getCurrentTime();
-                    if(currentTime !== "00:00:00"){
-                        taskService.updateTaskTime(currentActiveId, currentTime);
-                    }
-
                     const currentTask = getTaskById(currentActiveId);
                     if(currentTask){
+                        saveTimerState(currentTask); 
                         currentTask.status = 'paused';
-                        taskService.updateTask(currentTask);
+                        taskService.updateTask(currentTask); 
                     }
 
                     timerPause();
-                    clearActiveTask();
+                    clearActiveTask(); 
 
                 }
 
@@ -309,12 +300,7 @@ export function pauseActiveTask() {
 
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
-
-        const currentTime = getCurrentTime();
-        if(currentTime !== "00:00:00"){
-            taskService.updateTaskTime(activeTaskId, currentTime);
-        }
-
+        
         saveTimerState(activeTask);
         activeTask.status = 'paused';
         taskService.updateTask(activeTask);
@@ -338,12 +324,7 @@ export function completeActiveTask() {
 
     const activeTask = getTaskById(activeTaskId);
     if (activeTask) {
-
-        const currentTime = getCurrentTime();
-        if(currentTime !== "00:00:00"){
-            taskService.updateTaskTime(activeTaskId, currentTime);
-        }
-
+        
         saveTimerState(activeTask);
         activeTask.status = 'completed';
         activeTask.endDate = new Date().toISOString().split("T")[0];

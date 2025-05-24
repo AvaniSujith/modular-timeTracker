@@ -1,6 +1,6 @@
-import { addTimes } from "./utils/timeUtils.js";
+// import { addTimes } from "./utils/timeUtils.js";
 import { getCurrentUser } from "./services/authService.js";
-import { getDashboardStatus } from "./services/taskService.js"; // Import getDashboardStatus
+import { getDashboardStatus, updateTotalTime} from "./services/taskService.js"; 
 
 export function saveItem(key, data){
     localStorage.setItem(key, JSON.stringify(data));
@@ -59,29 +59,25 @@ export function saveTimerState(task){
         end: now.toISOString(),
         duration: timerValue
     };
-
+ 
     task.timeFragments = task.timeFragments || [];
     task.timeFragments.push(timeFragment);
 
-    // The total time calculation will be handled by updateTaskTime in taskService
-    // based on the accumulated time fragments.
-    // We no longer directly add timerValue to task.timeTaken here.
+    updateTotalTime(task); 
 
     const tasks = loadTasks(currentUser.email);
     const idx = tasks.findIndex(t => t.id === task.id);
     if(idx !== -1){
-        tasks[idx] = task;
+        tasks[idx] = task; 
         saveTasks(currentUser.email, tasks);
     }
 }
 
-// Function to load the timer state for a given task
 export function loadTimerStateForTask(task) {
     if (!task || !task.timeTaken || task.timeTaken === "00:00:00") {
         return { hours: 0, minutes: 0, seconds: 0 };
     }
 
-    // Assuming timeTaken is in "HH:MM:SS" format
     const [hoursStr, minutesStr, secondsStr] = task.timeTaken.split(':');
     const hours = parseInt(hoursStr, 10) || 0;
     const minutes = parseInt(minutesStr, 10) || 0;
@@ -96,17 +92,16 @@ export function updateTaskCounters(totalTimeElement){
     if (!currentUser) return;
 
     const tasks = loadTasks(currentUser.email);
-    const { totalCount, pausedCount, completedCount, totalHours } = getDashboardStatus(); // Use getDashboardStatus
+    const { totalCount, pausedCount, completedCount, totalTimeFormatted } = getDashboardStatus(); 
 
     const totalCountElement = document.getElementById("total-count");
     const completedCountElement = document.getElementById("completed-count");
     const pausedCountElement = document.getElementById("paused-count");
 
-    // Update the total time element
+
     if (totalTimeElement) {
-        // Note: There are multiple elements with id="time-total" in index.html.
-        // This will update the first one found. Consider fixing duplicate IDs in index.html.
-        totalTimeElement.textContent = totalHours; // Display total hours
+        
+        totalTimeElement.textContent = totalTimeFormatted; 
     }
 
     if (totalCountElement) totalCountElement.textContent = totalCount;

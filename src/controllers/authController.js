@@ -1,9 +1,9 @@
 // import * as authService from '../services/authService.js';
 // import * as authView from '../views/authView.js';
 import { initAuthUI, showError, showLogoutButton } from '../views/authView.js';
-import { login, signup, logout } from '../services/authService.js'; // Import logout
-import { getActiveTask } from '../services/taskService.js'; // Import getActiveTask
-import { pauseActiveTask } from './taskController.js'; // Import pauseActiveTask
+import { login, signup, logout } from '../services/authService.js';
+import { getActiveTask } from '../services/taskService.js'; 
+import { pauseActiveTask } from './taskController.js';
 
 export function initAuth(){
         initAuthUI({
@@ -57,7 +57,7 @@ export function initAuth(){
         });
 
         showLogoutButton(() => {
-            // Pause active task before logging out
+            
             const activeTask = getActiveTask();
             if (activeTask) {
                 pauseActiveTask();
