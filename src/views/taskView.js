@@ -44,11 +44,6 @@ export function showNewTaskModal(onSubmit){
                 </div>
 
                 <div class="form-group">
-                    <label for="targetDate">Target Date to Complete</label>
-                    <input type="date" id="targetDate" required>
-                </div>
-
-                <div class="form-group">
                     <label for="details">Details</label>
                     <textarea id="details" placeholder="Task details" rows="3"></textarea>
                 </div>
@@ -74,7 +69,7 @@ export function showNewTaskModal(onSubmit){
             tag : modal.querySelector('#tag').value.trim(),
             startDate: modal.querySelector('#startDate').value,
             status : modal.querySelector('#status').value,
-            targetDate : modal.querySelector('#targetDate').value,
+            // targetDate : modal.querySelector('#targetDate').value,
             details : modal.querySelector('#details').value.trim(),
         };
         onSubmit(data);
@@ -100,7 +95,6 @@ export function renderPausedTable(tasks, onMoreClick){
             <td><span class="priority-badge priority-${task.priority}">${task.priority}</span></td>
             <td><span class="tag-badge">${task.tag}</span></td> 
             <td>${task.startDate}</td>
-            <td>${task.targetDate || "--"}</td>
             <td>${task.timeTaken || "00:00:00"}</td>
             <td>${formatTimeFragment(task.timeFragments)}</td>
             <td>
@@ -136,7 +130,6 @@ export function renderCompletedTable(tasks, onMoreClick){
             <td><span class="priority-badge priority-${task.priority}">${task.priority}</span></td>
             <td><span class="tag-badge">${task.tag}</span></td> 
             <td>${task.startDate}</td>
-            <td>${task.targetDate}</td>
             <td>${task.endDate || "--"}</td>
             <td>${task.timeTaken || "00:00:00"}</td>
             <td>
@@ -201,10 +194,6 @@ export function showDetailsModal(taskId, actions = {}){
                 <div>
                     <p class="modal-label"><strong>End Date:</strong></p>
                     <p class="end-date modal-description">${task.endDate || "--"}</p>
-                </div>
-                <div>
-                    <p class="modal-label"><strong>Target Date:</strong></p>
-                    <p class="target-date modal-description"> ${task.targetDate || "--"}</p>
                 </div>
                 <div>
                     <p class="modal-label"><strong>Total Time Taken:</strong></p>
@@ -335,11 +324,6 @@ function editTask(taskId, onSave) {
                         <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
                     </select>
                 </div>
-            
-                <div class="form-group">
-                    <label for="editTargetDate">Target Completion Date</label>
-                    <input type="date" id="editTargetDate" value="${task.targetDate || ''}" required>
-                </div>
                 
                 <div class="form-group">
                     <label for="editDetails">Details</label>
@@ -373,7 +357,7 @@ function editTask(taskId, onSave) {
             priority: editForm.querySelector("#editPriority").value,
             tag: editForm.querySelector("#editTag").value.trim(),
             status: editForm.querySelector("#editStatus").value,
-            targetDate: editForm.querySelector("#editTargetDate").value,
+            // targetDate: editForm.querySelector("#editTargetDate").value,
             details: editForm.querySelector("#editDetails").value.trim()
         };
         
@@ -397,7 +381,7 @@ export function setOngoingTask(task){
         "displayPriority": task.priority,
         "displayStartDate": task.startDate,
         "displayStatus": task.status,
-        "displayTargetTime": task.targetDate
+        // "displayTargetTime": task.targetDate
     };
     
     for (const [id, value] of Object.entries(displayMap)) {
@@ -421,8 +405,11 @@ export function setOngoingTask(task){
 
 export function clearOngoingTaskDisplay(){
     const displayElements = [
-        "displayTaskName", "displayTag", "displayPriority", 
-        "displayStartDate", "displayStatus", "displayTargetTime"
+        "displayTaskName", 
+        "displayTag", 
+        "displayPriority", 
+        "displayStartDate", 
+        "displayStatus"
     ];
     
     displayElements.forEach(id => {

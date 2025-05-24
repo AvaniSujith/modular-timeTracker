@@ -29,4 +29,3 @@ export function getFilterValues(){
         endDate: document.getElementById('filterEndDate')?.value,
     };
 }
-
