@@ -1,3 +1,5 @@
+
+//timer.js
 export let timer = null;
 let seconds = 0;
 let minutes = 0; 
@@ -21,8 +23,10 @@ let endTimerBtn;
 
 
 export function timerStart(){
-
     if(timer) return;
+
+    localStorage.setItem("timerStartTime", new Date().toISOString());
+
     timer = setInterval(updateTimerDisplay, 1000);
 
     startTimerBtn.disabled = true;
@@ -35,6 +39,13 @@ export function timerPause(){
     clearInterval(timer);
     timer = null;
 
+    localStorage.removeItem("timerStartTime");
+
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    timerDisplay.textContent = "00:00:00";
+
     startTimerBtn.disabled = false;
     pauseTimerBtn.disabled = true;
     endTimerBtn.disabled = false;
@@ -44,6 +55,9 @@ export function timerEnd(){
 
     clearInterval(timer);
     timer = null;
+
+    localStorage.removeItem("timerStartTime");
+
     seconds = 0; 
     minutes = 0;
     hours = 0;
@@ -57,6 +71,7 @@ export function timerEnd(){
 
 
 export function updateTimerDisplay(){
+
     seconds++;
     if (seconds >= 60) {
         seconds = 0;

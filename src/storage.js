@@ -1,3 +1,5 @@
+//storage.js
+
 // import { addTimes } from "./utils/timeUtils.js";
 import { getCurrentUser } from "./services/authService.js";
 import { getDashboardStatus, updateTotalTime} from "./services/taskService.js"; 
@@ -50,6 +52,8 @@ export function saveTimerState(task){
 
     const timerValue = document.getElementById("timer").textContent;
 
+    if(timerValue === "00:00:00") return;
+
     const now = new Date();
     const timerStartTime = localStorage.getItem("timerStartTime") || now.toISOString();
 
@@ -65,6 +69,8 @@ export function saveTimerState(task){
 
     updateTotalTime(task); 
 
+    localStorage.removeItem("timerStartTime");
+
     const tasks = loadTasks(currentUser.email);
     const idx = tasks.findIndex(t => t.id === task.id);
     if(idx !== -1){
@@ -74,16 +80,18 @@ export function saveTimerState(task){
 }
 
 export function loadTimerStateForTask(task) {
-    if (!task || !task.timeTaken || task.timeTaken === "00:00:00") {
-        return { hours: 0, minutes: 0, seconds: 0 };
-    }
+    // if (!task || !task.timeTaken || task.timeTaken === "00:00:00") {
+    //     return { hours: 0, minutes: 0, seconds: 0 };
+    // }
 
-    const [hoursStr, minutesStr, secondsStr] = task.timeTaken.split(':');
-    const hours = parseInt(hoursStr, 10) || 0;
-    const minutes = parseInt(minutesStr, 10) || 0;
-    const seconds = parseInt(secondsStr, 10) || 0;
+    // const [hoursStr, minutesStr, secondsStr] = task.timeTaken.split(':');
+    // const hours = parseInt(hoursStr, 10) || 0;
+    // const minutes = parseInt(minutesStr, 10) || 0;
+    // const seconds = parseInt(secondsStr, 10) || 0;
 
-    return { hours, minutes, seconds };
+    // return { hours, minutes, seconds };
+
+    return { hours: 0, minutes: 0, seconds: 0 };
 }
 
 

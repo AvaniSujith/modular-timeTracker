@@ -67,10 +67,16 @@ function handleMoreClick(taskId){
             taskService.resumeTask(taskId); 
             const resumedTask = taskService.getTaskById(taskId);
 
-            if (resumedTask) {
+            if(resumedTask){
+
                 setOngoingTask(resumedTask);
-                const { hours, minutes, seconds } = loadTimerStateForTask(resumedTask);
-                setTimerState(hours, minutes, seconds);
+
+                // const { hours, minutes, seconds } = loadTimerStateForTask(resumedTask);
+                // setTimerState(hours, minutes, seconds);
+
+                setTimerState(0, 0, 0);
+                resetTimerDisplay();
+                
                 timerStart();
                 updateTimerButtonState(true, false);
                 updateAddTaskButtonState(true); 
