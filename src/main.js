@@ -1,11 +1,12 @@
 import { initAuth } from "./controllers/authController.js";
 import { initFilterController } from "./controllers/filterController.js";
 import { initTaskController, pauseActiveTask, completeActiveTask } from "./controllers/taskController.js"; 
-import { createGraph } from "./analytics.js";
+// import { createGraph } from "./analytics.js";
 import { handlingNavLinks, sideBarToggler } from "./ui.js";
 // import * as authService from './services/authService.js';
 import { initializeTimer, timerStart, timerEnd, resetTimerDisplay } from "./timer.js"; 
 import { getActiveTask } from "./services/taskService.js"; 
+// import { refreshAnalyticsData,createGraph } from "./analytics.js";
 // import { setOngoingTask, clearOngoingTaskDisplay } from "./views/taskView.js"; 
 
 window.onload = () => {
@@ -74,8 +75,10 @@ window.onload = () => {
     initFilterController();
 
     handlingNavLinks();
-    createGraph();
+    // createGraph();
     sideBarToggler();
+
+    // refreshAnalyticsData();
 
     window.addEventListener('beforeunload', () => {
         const activeTask = getActiveTask();
@@ -83,4 +86,12 @@ window.onload = () => {
             pauseActiveTask();
         }
     });
+
+    window.addEventListener("DOMContentLoaded", function () {
+  const storedTaskList = JSON.parse(localStorage.getItem("taskData")) || [];
+  
+  const graphData = convertTasksToGraphData(storedTaskList); // 👈 Convert to correct format
+  renderGraph(document.getElementById("graph"), graphData);  // 👈 Use converted data
+});
+
 };
