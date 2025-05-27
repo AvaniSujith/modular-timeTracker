@@ -1,3 +1,5 @@
+//main.js
+
 import { initAuth } from "./controllers/authController.js";
 import { initFilterController } from "./controllers/filterController.js";
 import { initTaskController, pauseActiveTask, completeActiveTask } from "./controllers/taskController.js"; 
@@ -90,8 +92,8 @@ window.onload = () => {
     window.addEventListener("DOMContentLoaded", function () {
   const storedTaskList = JSON.parse(localStorage.getItem("taskData")) || [];
   
-  const graphData = convertTasksToGraphData(storedTaskList); // 👈 Convert to correct format
-  renderGraph(document.getElementById("graph"), graphData);  // 👈 Use converted data
+  const graphData = convertTasksToGraphData(storedTaskList); 
+  renderGraph(document.getElementById("graph"), graphData);  
 });
 
 };
