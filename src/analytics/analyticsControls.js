@@ -128,7 +128,7 @@ function setupControlEventListeners(controls){
             updateWeekControllers();
         }
     });
-    
+
 }
 
 function updateWeekControllers() {
