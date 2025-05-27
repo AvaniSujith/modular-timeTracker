@@ -1,8 +1,8 @@
 import { loadTasks } from "../storage.js";
 import { getCurrentUser } from "../services/authService.js";
+import { renderGraph } from "./analyticsRender.js";
 
-
-const sample = [];
+const sampleData = [];
 
 let currentWeekOffset = 0;
 let taskData = sampleData;
@@ -137,7 +137,7 @@ function convertTasksToGraphData(taskList){
 
     taskList.forEach(task => {
         task.timeFragments.forEach(fragment => {
-            const data = fragment.date;
+            const date = fragment.date;
             const duration = fragment.duration;
             const [hh, mm, ss] = duration.split(":").map(Number);
             const totalSeconds = hh * 3600 + mm * 60 + ss;
@@ -162,7 +162,6 @@ function refreshAnalyticsData(){
     taskData = fetchLocalStorageData();
     const graph = document.querySelector(".analytics-graph");
     if(graph){
-        const { renderGraph } = require('./analyticsRender.js');
         renderGraph(graph);
     }
 }
@@ -185,7 +184,6 @@ function setupStorageListener(){
             taskData = newData;
             const graph = document.querySelector(".analytics-graph");
             if(graph){
-                const { renderGraph } = require('./analyticsRender.js');
                 renderGraph(graph);
             }
         }

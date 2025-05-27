@@ -1,5 +1,6 @@
-import { formatWeekDisplay } from "./analyticsUtils";
-import { getGraphSettings, getCurrentWeekOffset, setCurrentWeekOffset } from "./analyticsCore";
+import { formatWeekDisplay, generateColors } from "./analyticsUtils.js";
+import { getGraphSettings, getCurrentWeekOffset, setCurrentWeekOffset } from "./analyticsCore.js";
+import { renderGraph } from "./analyticsRender.js";
 
 function buildControls(){
      const controls = document.createElement("div");
@@ -85,13 +86,13 @@ function setupControlEventListeners(controls){
 
     timePeriodSelect.addEventListener("change", function(event){
         GRAPH_SETTINGS.period = event.target.value;
-        const { renderGraph } = require('./analyticsRender.js');
+        // const { renderGraph } = require('./analyticsRender.js');
         renderGraph(document.querySelector(".analytics-graph"));
     });
 
     timeUnitSelect.addEventListener("change", function(event){
         GRAPH_SETTINGS.timeUnit = event.target.value;
-        const { renderGraph } = require('./analyticsRender.js');
+        // const { renderGraph } = require('./analyticsRender.js');
         renderGraph(document.querySelector(".analytics-graph"));
     });
 
@@ -99,7 +100,7 @@ function setupControlEventListeners(controls){
         GRAPH_SETTINGS.showGridLines = event.target.checked;
         toggleGridLines(event.target.checked);
     });
-
+    
     borderToggle.addEventListener("change", function(event){
         GRAPH_SETTINGS.showBarBorders = event.target.checked;
         toggleBarBorders(event.target.checked);
@@ -113,7 +114,7 @@ function setupControlEventListeners(controls){
     lastWeekButton.addEventListener("click", function(event){
         event.preventDefault();
         setCurrentWeekOffset(getCurrentWeekOffset() - 1);
-        const { renderGraph } = require('./analyticsRender.js');
+        // const { renderGraph } = require('./analyticsRender.js');
         renderGraph(document.querySelector(".analytics-graph"));
         updateWeekControllers();
     });
@@ -123,7 +124,7 @@ function setupControlEventListeners(controls){
         const currentOffset = getCurrentWeekOffset();
         if(currentOffset < 0){
             setCurrentWeekOffset(currentOffset + 1);
-            const { renderGraph } = require('./analyticsRender.js');
+            // const { renderGraph } = require('./analyticsRender.js');
             renderGraph(document.querySelector(".analytics-graph"));
             updateWeekControllers();
         }
@@ -185,7 +186,7 @@ function toggleBarBorders(show) {
 function updateBarColors() {
     const bars = document.querySelectorAll('.histogram-bar');
     const GRAPH_SETTINGS = getGraphSettings();
-    const { generateColors } = require('./analyticsUtils.js');
+    // const { generateColors } = require('./analyticsUtils.js');
     
     const colors = GRAPH_SETTINGS.colorMode === "distinct"
         ? generateColors(bars.length)

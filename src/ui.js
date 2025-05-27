@@ -1,6 +1,6 @@
 
 // import { renderCompletedTable, renderPausedTable } from "./views/taskView.js"; 
-import { createGraph } from "./analytics.js";
+import { createGraph } from "./analytics/analytics.js";
 import { renderTables } from "./controllers/taskController.js"; 
 
 export function handlingNavLinks(){

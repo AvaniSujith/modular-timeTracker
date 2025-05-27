@@ -11,7 +11,7 @@ import{
     getGraphSettings, 
     getCurrentWeekOffset,
     getTaskData
-} from './analyticsCore';
+} from './analyticsCore.js';
 
 function renderGraph(graph){
     if(!graph) return;
@@ -50,20 +50,18 @@ function renderGraph(graph){
     histogramContainer.className = "histogram-container";
 
     const yAxis = createYAxis(yLabels);
-    const { chartArea, XAxis } = createChartAndXAxis(completeData, normalizedMax);
+    const { chartArea, xAxis } = createChartAndXAxis(completeData, normalizedMax);
 
     const rightSection = document.createElement("div");
     rightSection.className = "right-section";
     rightSection.appendChild(chartArea);
-    rightSection.appendChild(XAxis);
+    rightSection.appendChild(xAxis);
 
     histogramContainer.appendChild(yAxis);
     histogramContainer.appendChild(rightSection);
     graph.appendChild(histogramContainer);
 
 }
-
-
 
 function createYAxis(yLabels) {
     const yAxis = document.createElement("div");

@@ -11,6 +11,14 @@ import { getActiveTask } from "./services/taskService.js";
 // import { refreshAnalyticsData,createGraph } from "./analytics.js";
 // import { setOngoingTask, clearOngoingTaskDisplay } from "./views/taskView.js"; 
 
+import { 
+    createGraph,
+    refreshAnalyticsData,
+    initializeAnalytics,
+    convertTasksToGraphData,
+    renderGraph
+} from "./analytics/analytics.js";
+
 window.onload = () => {
     console.log("window.onload fired in main.js");
 
@@ -90,10 +98,22 @@ window.onload = () => {
     });
 
     window.addEventListener("DOMContentLoaded", function () {
-  const storedTaskList = JSON.parse(localStorage.getItem("taskData")) || [];
-  
-  const graphData = convertTasksToGraphData(storedTaskList); 
-  renderGraph(document.getElementById("graph"), graphData);  
-});
+        const storedTaskList = JSON.parse(localStorage.getItem("taskData")) || [];
+        
+        // const graphData = convertTasksToGraphData(storedTaskList); 
+        // renderGraph(document.getElementById("graph"), graphData);  
+        if(storedTaskList.length > 0){
+            const graphData = convertTasksToGraphData(storedTaskList);
+            const graphElement = document.getElementById("graph");
+
+            if(graphData && graphElement){
+                renderGraph(graphElement, graphData);
+            }
+        }
+    });
+
+    setInterval(()=>{
+        refreshAnalyticsData();
+    }, 30000);
 
 };
