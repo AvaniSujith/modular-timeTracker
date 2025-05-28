@@ -212,7 +212,7 @@ export function initProfileEdit() {
 
     editButton.addEventListener('click', () => {
         if (isEditing) {
-            // Save functionality
+            
             const updatedDetails = {
                 username: document.getElementById('edit-username').value.trim(),
                 designation: document.getElementById('edit-designation').value.trim(),
