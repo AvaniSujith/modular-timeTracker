@@ -1875,8 +1875,8 @@
     flex-direction: column;
     width: 60px;
     justify-content: space-between;
-    height: calc(100% -40px);
-    padding: 0 0 55px 0;
+    height: calc(100% - 40px);
+    /* padding: 0 0 55px 0; */
     margin-right: 10px;
   }
   .y-axis-label {

@@ -113,7 +113,7 @@ function generateYAxisLabels(normalizedMax, timeUnit){
     //     }
     // }
 
-    for(let i = interval; i <= normalizedMax; i += interval){
+    for(let i = 0; i <= normalizedMax; i += interval){
         if(timeUnit === "hours"){
             labels.push((i / 60) + 'h');
         }else{
