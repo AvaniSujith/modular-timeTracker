@@ -1,8 +1,7 @@
-
-// import { renderCompletedTable, renderPausedTable } from "./views/taskView.js"; 
+// import { renderCompletedTable, renderPausedTable } from "./views/taskView.js";
 import { createGraph } from "./analytics/analytics.js";
 import { populateProfileDetails, initProfileEdit } from "./views/authView.js";
-import { renderTables } from "./controllers/taskController.js"; 
+import { renderTables } from "./controllers/taskController.js";
 
 export function handlingNavLinks(){
     console.log("handlingNavLinks function called");
@@ -28,12 +27,20 @@ export function handlingNavLinks(){
                 targetPageElement.classList.add('active');
             }
 
+        
+            if (window.innerWidth <= 768) {
+                const mainSidebar = document.querySelector('.sidebar-aside');
+                const sidebarNav = document.querySelector('.sidebar-nav');
+                if (mainSidebar) mainSidebar.classList.remove('show-menu');
+                if (sidebarNav) sidebarNav.classList.remove('show-menu');
+            }
+
             if(targetPage === 'works-done'){
-                renderTables(); 
+                renderTables();
             } else if(targetPage === 'analytics'){
                 setTimeout(createGraph, 100);
             } else if(targetPage === 'dashboard') {
-                renderTables(); 
+                renderTables();
             } else if (targetPage === 'profile') {
                 populateProfileDetails();
                 initProfileEdit();
@@ -55,14 +62,46 @@ export function closeModal(modalId){
 
 export function sideBarToggler(){
     const mainSidebar = document.querySelector('.sidebar-aside');
-    const toggleBtn = document.querySelector(".toggler");
+    const sidebarToggleBtn = document.querySelector(".sidebar-toggler");
 
-    if(toggleBtn && mainSidebar){
-        toggleBtn.addEventListener("click", () => {
+    if(sidebarToggleBtn && mainSidebar){
+        sidebarToggleBtn.addEventListener("click", () => {
             mainSidebar.classList.toggle("collapse");
             console.log("Sidebar toggled")
         });
     }else{
-        console.warn("sidebar btn not found");
+        console.warn("sidebar toggler btn not found");
     }
 }
+
+export function menuToggler(){
+    const menuBtn = document.querySelector('.menu-toggler');
+    const sidebarNav = document.querySelector('.sidebar-nav');
+    const mainSidebar = document.querySelector('.sidebar-aside');
+
+    if(menuBtn && sidebarNav && mainSidebar){
+        menuBtn.addEventListener('click', () => {
+            
+            if (window.innerWidth <= 768) {
+                sidebarNav.classList.toggle('show-menu');
+                mainSidebar.classList.toggle('show-menu');
+                mainSidebar.classList.remove('collapse');
+                console.log("Menu toggled on small screen");
+            }
+        
+        });
+    } else {
+        console.warn("Menu toggler, sidebar nav, or main sidebar not found");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    menuToggler();
+
+    if (window.innerWidth <= 768) {
+        const mainSidebar = document.querySelector('.sidebar-aside');
+        const sidebarNav = document.querySelector('.sidebar-nav');
+        if (mainSidebar) mainSidebar.classList.remove('show-menu');
+        if (sidebarNav) sidebarNav.classList.remove('show-menu');
+    }
+});

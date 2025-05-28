@@ -1,5 +1,4 @@
-
-  .hidden {
+.hidden {
     display: none;
   }
 
@@ -516,9 +515,9 @@
  
   .page {
     /* max-width: 1200px; */
-    margin-left: 280px;
+    /* margin-left: 280px; */
     padding: 30px;
-    transition: margin-left 0.3s;
+    
   }
 
   .sidebar-aside.collapse + .main-nav {
@@ -867,7 +866,7 @@
   }
    */
   .add-task-btn:hover {
-    background-color: #FDFCFC;
+    background-color: #b08aa7;
     color: #050416;
     /* box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4); */
   }
@@ -1478,68 +1477,6 @@
   #login-page:not(.active) {
     display: none;
   }
-
-
-/*
-  .login-form{
-    display: flex;
-    flex-direction: column;
-    border: 1px solid;
-    padding: 20px;
-
-  }
-
-  .img-container{
-    width: 60%;
-  }
-
-
-  .logo-img{
-    width: 100%;
-    height: 100%;
-  }
-
-
-  .logo-img img{
-    max-width: 400px;
-    height: auto;
-  }
-  .login-form form{
-    display: flex;
-    flex-direction: column;
-  }
-
-
-  .login-form h2{
-    margin-bottom: 20px;
-    font-size: 45px;
-  }
-
-  .login-form label{
-    font-size: 25px;
-  }
-
-
-  .login-form
-  #userEmail, 
-  #userPassword{
-    margin: 10px 0px;
-    border: none;
-    /* background-color: red !important; */
-  /* } */
-/* 
-  .login-form input{
-    padding: 10px 20px;
-    background-color: #01070a !important;
-  }
-
-  .login-singup-block{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1;
-  } */
    
   #login-page{
     background-color: #ffffff;
@@ -1561,7 +1498,7 @@
     align-items: center;
     justify-content: center;
     width: 55%;
-    /* border: 3px solid #b08aa7; */
+    /* border: 3:1:43:15 PM (Asia/Calcutta, UTC+5.5:00)px solid #b08aa7; */
     background-color: #f7e9f8;
     /* backdrop-filter: blur(30px); */
     border-radius: 30px 30% 30% 30px;
@@ -1847,25 +1784,6 @@
     background-color: #FFFFFF;
     padding: 10px;
   }
-
-  /* .grid{
-    width: 100%;
-    height: 100%;
-    display: grid;
-    border: 1px solid #ccc;
-    grid-auto-flow: column; 
-  }
-
-  .cell{
-    border: 1px solid #ddd;
-    padding: 4px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px; 
-    color: #333;
-  } */
 
   .histogram-container{
     display: flex;
@@ -2208,6 +2126,11 @@
       border-bottom-left-radius: 20px; */
     }
 
+    .sidebar-aside.show-menu {
+      height: auto;
+      overflow-y: visible;
+    }
+
     .sidebar-aside.collapse .sidebar-nav .nav-link .nav-label{
       opacity: 1;
     }
@@ -2353,6 +2276,17 @@
     .x-axis-label{
       font-size: 10px;
     }
+
+    .sidebar-nav {
+      display: none;
+      position: static; /* Change position to static */
+      bottom: auto; /* Remove bottom positioning */
+      height: auto; /* Allow height to adjust based on content */
+    }
+
+    .sidebar-nav.show-menu {
+      display: block;
+    }
   }
 
 
@@ -2440,15 +2374,12 @@
 
   }
 
-
-
   @media screen and (max-width: 320px){
     
     .form-container{
       width: 280px;
     }
-
-
+    
     .signup-form{
       width:75% ;
       left: 13%;

@@ -75,37 +75,47 @@ window.onload = () => {
 
 
     const currentUser = getCurrentUser();
+    console.log("Retrieved currentUser in main.js:", currentUser);
 
-    if (currentUser) {
-        
-        if (mainSidebar) mainSidebar.classList.remove('hidden');
-        if (mainNav) mainNav.classList.remove('hidden');
-        if (mainContent) mainContent.classList.remove('hidden');
-        if (loginPage) loginPage.classList.remove('active');
-        otherPages.forEach(page => page.classList.remove('active'));
-        const dashboardPage = document.getElementById('dashboard-page');
-        if (dashboardPage) dashboardPage.classList.add('active');
+    const isValidUser = currentUser && typeof currentUser === 'object' && currentUser.email;
 
-        
-        initTaskController({ startBtn: startTimerBtn, pauseBtn: pauseTimerBtn, endBtn: endTimerBtn }, addTaskBtn);
-        initFilterController();
-        renderTables(); 
-        
-    } else {
-        
-        if (mainSidebar) mainSidebar.classList.add('hidden');
-        if (mainNav) mainNav.classList.add('hidden');
-        if (mainContent) mainContent.classList.add('hidden');
-        if (mainSidebar) mainSidebar.classList.add('hidden');
-        if (mainNav) {
-            mainNav.classList.add('hidden');
-            console.log("User not logged in, mainNav hidden. mainNav element:", mainNav);
-            console.log("mainNav classList:", mainNav.classList);
+        if (isValidUser) {
+            console.log("Valid user found, showing application UI.");
+            if (mainSidebar) mainSidebar.classList.remove('hidden');
+            if (mainNav) mainNav.classList.remove('hidden');
+            if (mainContent) mainContent.classList.remove('hidden');
+            if (loginPage) loginPage.classList.remove('active');
+            otherPages.forEach(page => page.classList.remove('active'));
+            const dashboardPage = document.getElementById('dashboard-page');
+            if (dashboardPage) dashboardPage.classList.add('active');
+
+            
+            if (window.innerWidth <= 768) {
+                if (mainSidebar) mainSidebar.classList.remove('show-menu');
+                const sidebarNav = document.querySelector('.sidebar-nav');
+                if (sidebarNav) sidebarNav.classList.remove('show-menu');
+            }
+
+
+            initTaskController({ startBtn: startTimerBtn, pauseBtn: pauseTimerBtn, endBtn: endTimerBtn }, addTaskBtn);
+            initFilterController();
+            renderTables();
+
+        } else {
+            console.log("No valid user found, showing login page.");
+            if (mainSidebar) mainSidebar.classList.add('hidden');
+            if (mainNav) mainNav.classList.add('hidden');
+            if (mainContent) mainContent.classList.add('hidden');
+            if (mainSidebar) mainSidebar.classList.add('hidden');
+            if (mainNav) {
+                mainNav.classList.add('hidden');
+                console.log("User not logged in, mainNav hidden. mainNav element:", mainNav);
+                console.log("mainNav classList:", mainNav.classList);
+            }
+            if (mainContent) mainContent.classList.add('hidden');
+            if (loginPage) loginPage.classList.add('active');
+            otherPages.forEach(page => page.classList.remove('active'));
         }
-        if (mainContent) mainContent.classList.add('hidden');
-        if (loginPage) loginPage.classList.add('active');
-        otherPages.forEach(page => page.classList.remove('active'));
-    }
 
     console.log("Initializing auth and UI event handlers");
     initAuth(); 
