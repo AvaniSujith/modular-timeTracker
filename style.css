@@ -1080,7 +1080,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 0 50px;
+    padding: 0 20px;
     height: 100%;
     text-align: center;
   }
@@ -2379,7 +2379,7 @@
     .form-container{
       width: 280px;
     }
-    
+
     .signup-form{
       width:75% ;
       left: 13%;

@@ -10,7 +10,7 @@ export function saveItem(key, data){
 export function loadItem(key){
     try{
         const data = localStorage.getItem(key);
-        console.log(`Loading item with key "${key}":`, data);
+        // console.log(`Loading item with key "${key}":`, data);
         return JSON.parse(data);
     }catch(e){
         console.error(`Error loading item with key "${key}":`, e);

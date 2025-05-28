@@ -66,14 +66,6 @@ window.onload = () => {
     }
 
 
-    // console.log("Sidebar element:", mainSidebar);
-    // console.log("Main nav element:", mainNav);
-    // console.log("Login page element:", loginPage);
-    // console.log("Main content element:", mainContent);
-    // console.log("Other pages elements:", otherPages);
-    // console.log("Add Task button:", addTaskBtn);
-
-
     const currentUser = getCurrentUser();
     console.log("Retrieved currentUser in main.js:", currentUser);
 

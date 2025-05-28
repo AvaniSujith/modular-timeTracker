@@ -4,16 +4,16 @@ import { populateProfileDetails, initProfileEdit } from "./views/authView.js";
 import { renderTables } from "./controllers/taskController.js";
 
 export function handlingNavLinks(){
-    console.log("handlingNavLinks function called");
+    // console.log("handlingNavLinks function called");
     const navLinks = document.querySelectorAll('.nav-link[data-page]');
-    console.log("Found nav links:", navLinks);
+    // console.log("Found nav links:", navLinks);
 
     navLinks.forEach(link => {
         console.log("Adding click listener to nav link:", link);
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const targetPage = link.getAttribute('data-page');
-            console.log("Nav link clicked, target page:", targetPage);
+            // console.log("Nav link clicked, target page:", targetPage);
 
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             link.parentElement.classList.add('active');
