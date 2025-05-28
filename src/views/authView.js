@@ -136,24 +136,30 @@ export function initAuthUI({ login, signup }){
 }
 
 export function showLogoutButton(logout){
+  console.log("showLogoutButton function called");
   const navLabels = document.querySelectorAll('.secondary-nav .nav-label');
+  console.log("Found nav labels in secondary nav:", navLabels);
 
   let logoutLink = null;
 
   navLabels.forEach(label => {
     if(label.textContent.trim().toLowerCase() === 'logout'){
       logoutLink = label.closest('.nav-link');
+      console.log("Found logout label, closest nav-link:", logoutLink);
     }
   });
 
   if(logoutLink){
+    console.log("Adding click listener to logout link:", logoutLink);
     logoutLink.addEventListener('click', (e) => {
       e.preventDefault();
+      console.log("Logout link clicked");
       logout();
     });
   }else{
     console.error("logout link not found");
   }
+
   
 }
 

@@ -1,5 +1,4 @@
 
-//timer.js
 export let timer = null;
 let seconds = 0;
 let minutes = 0; 

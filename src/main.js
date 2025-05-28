@@ -1,8 +1,8 @@
-//main.js
 
 import { initAuth } from "./controllers/authController.js";
 import { initFilterController } from "./controllers/filterController.js";
-import { initTaskController, pauseActiveTask, completeActiveTask } from "./controllers/taskController.js"; 
+import { initTaskController, pauseActiveTask, completeActiveTask, renderTables } from "./controllers/taskController.js";
+import { getCurrentUser } from "./services/authService.js";
 // import { createGraph } from "./analytics.js";
 import { handlingNavLinks, sideBarToggler } from "./ui.js";
 import { initProfileEdit } from "./views/authView.js";
@@ -28,22 +28,7 @@ window.onload = () => {
     const loginPage = document.getElementById('login-page');
     const mainContent = document.querySelector('main');
     const otherPages = document.querySelectorAll('main > .page');
-    const addTaskBtn = document.getElementById('addTaskBtn'); 
-
-
-    // console.log("Sidebar element:", mainSidebar);
-    // console.log("Main nav element:", mainNav);
-    // console.log("Login page element:", loginPage);
-    // console.log("Main content element:", mainContent);
-    // console.log("Other pages elements:", otherPages);
-    // console.log("Add Task button:", addTaskBtn);
-
-
-    if (mainSidebar) mainSidebar.classList.add('hidden');
-    if (mainNav) mainNav.classList.add('hidden');
-    if (mainContent) mainContent.classList.add('hidden');
-    if (loginPage) loginPage.classList.add('active');
-    otherPages.forEach(page => page.classList.remove('active'));
+    const addTaskBtn = document.getElementById('addTaskBtn');
 
 
     const timerEl = document.getElementById('timer');
@@ -53,10 +38,10 @@ window.onload = () => {
 
     initializeTimer({ timerEl, startBtn: startTimerBtn, pauseBtn: pauseTimerBtn, endBtn: endTimerBtn });
 
-    
+
     if (startTimerBtn) {
         startTimerBtn.addEventListener('click', () => {
-            
+
             const activeTask = getActiveTask();
             if (activeTask) {
                 timerStart();
@@ -68,25 +53,65 @@ window.onload = () => {
 
     if (pauseTimerBtn) {
         pauseTimerBtn.addEventListener('click', () => {
-        
+
             pauseActiveTask();
         });
     }
 
     if (endTimerBtn) {
         endTimerBtn.addEventListener('click', () => {
-        
+
             completeActiveTask();
         });
     }
 
 
-    initAuth();
-    initTaskController({ startBtn: startTimerBtn, pauseBtn: pauseTimerBtn, endBtn: endTimerBtn }, addTaskBtn); 
-    initFilterController();
+    // console.log("Sidebar element:", mainSidebar);
+    // console.log("Main nav element:", mainNav);
+    // console.log("Login page element:", loginPage);
+    // console.log("Main content element:", mainContent);
+    // console.log("Other pages elements:", otherPages);
+    // console.log("Add Task button:", addTaskBtn);
 
+
+    const currentUser = getCurrentUser();
+
+    if (currentUser) {
+        
+        if (mainSidebar) mainSidebar.classList.remove('hidden');
+        if (mainNav) mainNav.classList.remove('hidden');
+        if (mainContent) mainContent.classList.remove('hidden');
+        if (loginPage) loginPage.classList.remove('active');
+        otherPages.forEach(page => page.classList.remove('active'));
+        const dashboardPage = document.getElementById('dashboard-page');
+        if (dashboardPage) dashboardPage.classList.add('active');
+
+        
+        initTaskController({ startBtn: startTimerBtn, pauseBtn: pauseTimerBtn, endBtn: endTimerBtn }, addTaskBtn);
+        initFilterController();
+        renderTables(); 
+        
+    } else {
+        
+        if (mainSidebar) mainSidebar.classList.add('hidden');
+        if (mainNav) mainNav.classList.add('hidden');
+        if (mainContent) mainContent.classList.add('hidden');
+        if (mainSidebar) mainSidebar.classList.add('hidden');
+        if (mainNav) {
+            mainNav.classList.add('hidden');
+            console.log("User not logged in, mainNav hidden. mainNav element:", mainNav);
+            console.log("mainNav classList:", mainNav.classList);
+        }
+        if (mainContent) mainContent.classList.add('hidden');
+        if (loginPage) loginPage.classList.add('active');
+        otherPages.forEach(page => page.classList.remove('active'));
+    }
+
+    console.log("Initializing auth and UI event handlers");
+    initAuth(); 
+
+    
     handlingNavLinks();
-    // createGraph();
     sideBarToggler();
 
     // refreshAnalyticsData();

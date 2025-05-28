@@ -3,6 +3,10 @@
     display: none;
   }
 
+  .main-nav.hidden {
+    display: none;
+  }
+
   * {
     margin: 0;
     padding: 0;
