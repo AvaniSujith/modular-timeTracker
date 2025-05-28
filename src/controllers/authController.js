@@ -58,7 +58,7 @@ export function initAuth(){
                 otherPages.forEach(page => page.classList.remove('active'));
                 if (dashboardPage) dashboardPage.classList.add('active');
 
-                // Initialize task controller and render tables after successful signup
+            
                 initTaskController();
                 renderTables();
             }

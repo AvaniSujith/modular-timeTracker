@@ -21,7 +21,8 @@ import {
 } from "./analytics/analytics.js";
 
 window.onload = () => {
-    console.log("window.onload fired in main.js");
+
+    // console.log("window.onload fired in main.js");
 
     const mainSidebar = document.querySelector('.sidebar-aside');
     const mainNav = document.querySelector('.main-nav');
@@ -67,6 +68,7 @@ window.onload = () => {
 
 
     const currentUser = getCurrentUser();
+
     console.log("Retrieved currentUser in main.js:", currentUser);
 
     const isValidUser = currentUser && typeof currentUser === 'object' && currentUser.email;
@@ -109,10 +111,8 @@ window.onload = () => {
             otherPages.forEach(page => page.classList.remove('active'));
         }
 
-    console.log("Initializing auth and UI event handlers");
-    initAuth(); 
 
-    
+    initAuth();  
     handlingNavLinks();
     sideBarToggler();
 
@@ -142,6 +142,6 @@ window.onload = () => {
 
     setInterval(()=>{
         refreshAnalyticsData();
-    }, 30000);
+    }, 3000);
 
 };

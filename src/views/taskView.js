@@ -49,7 +49,7 @@ export function showNewTaskModal(onSubmit){
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" id="addTaskBtnModal" class="btn-primary">Add Task</button>
+                    <button type="submit" id="addTaskBtnModal" class="btn-primary">Add Task</button>
                     <button type="button" class="btn-secondary close-btn">Cancel</button>
                 </div>
             </form>
@@ -62,7 +62,8 @@ export function showNewTaskModal(onSubmit){
     modal.querySelector('.close').onclick = () => modal.remove();
     modal.querySelector('.close-btn').onclick = () => modal.remove();
 
-    modal.querySelector('#addTaskBtnModal').onclick = () => {
+    modal.querySelector('#newTaskForm').onsubmit = (e) => {
+        e.preventDefault();
         const data = {
             name : modal.querySelector('#taskName').value.trim(),
             priority : modal.querySelector('#priority').value,
@@ -148,7 +149,7 @@ export function renderCompletedTable(tasks, onMoreClick){
 }
 
 export function showDetailsModal(taskId, actions = {}){
-    console.log("=== showDetailsModal ===");
+    
     console.log("Looking for task ID:", taskId, "Type:", typeof taskId);
     
     const task = taskService.getTaskById(taskId);
