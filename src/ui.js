@@ -1,6 +1,7 @@
 
 // import { renderCompletedTable, renderPausedTable } from "./views/taskView.js"; 
 import { createGraph } from "./analytics/analytics.js";
+import { populateProfileDetails, initProfileEdit } from "./views/authView.js";
 import { renderTables } from "./controllers/taskController.js"; 
 
 export function handlingNavLinks(){
@@ -29,6 +30,9 @@ export function handlingNavLinks(){
                 setTimeout(createGraph, 100);
             } else if(targetPage === 'dashboard') {
                 renderTables(); 
+            } else if (targetPage === 'profile') {
+                populateProfileDetails();
+                initProfileEdit();
             }
         });
     });

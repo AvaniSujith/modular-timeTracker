@@ -3,7 +3,7 @@
 import { initAuthUI, showError, showLogoutButton } from '../views/authView.js';
 import { login, signup, logout } from '../services/authService.js';
 import { getActiveTask } from '../services/taskService.js'; 
-import { pauseActiveTask } from './taskController.js';
+import { pauseActiveTask, initTaskController, renderTables } from './taskController.js';
 
 export function initAuth(){
         initAuthUI({
@@ -31,6 +31,10 @@ export function initAuth(){
                 otherPages.forEach(page => page.classList.remove('active'));
                 if (dashboardPage) dashboardPage.classList.add('active');
 
+                
+                initTaskController();
+                renderTables();
+
             },
             signup: ( userData ) => {
                 const newUser =  signup(userData);
@@ -53,6 +57,10 @@ export function initAuth(){
                 if (loginPage) loginPage.classList.remove('active');
                 otherPages.forEach(page => page.classList.remove('active'));
                 if (dashboardPage) dashboardPage.classList.add('active');
+
+                // Initialize task controller and render tables after successful signup
+                initTaskController();
+                renderTables();
             }
         });
 
@@ -75,5 +83,5 @@ export function initAuth(){
             if (mainContent) mainContent.classList.add('hidden');
             if (loginPage) loginPage.classList.add('active');
             otherPages.forEach(page => page.classList.remove('active'));
-        })
+        });
 }

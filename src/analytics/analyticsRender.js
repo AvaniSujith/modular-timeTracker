@@ -121,7 +121,7 @@ function createBar(entry, index, normalizedMax, distinctColors, barWidth) {
     bar.dataset.height = barHeight > 0 ? barHeight.toString() : "0";
 
     if(barHeight > 0){
-        const color = GRAPH_SETTINGS.colorMode === "distinct" ? distinctColors[index] : "#4CAF50";
+        const color = GRAPH_SETTINGS.colorMode === "distinct" ? distinctColors[index] : "#b08aa7";
         bar.style.backgroundColor = color;
         bar.dataset.originalColor = color;
     }else{

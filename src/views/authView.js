@@ -1,3 +1,5 @@
+import { getCurrentUser, updateCurrentUser } from '../services/authService.js';
+
 function authView(title, id, fields, buttonText, errorId) {
   return `
     <form class="${id}-form auth-form" id="${id}Form">
@@ -32,11 +34,11 @@ function authView(title, id, fields, buttonText, errorId) {
   `;
 }
 
-const signInFields = [
+const signInFields = [ 
         {   
             type: 'text',
             name: 'email',
-            placeholder: 'Email (Username)',
+            placeholder: 'Email',
             icon: 'fa fa-user',
             autocomplete:'autocomplete="off"'
         },
@@ -161,4 +163,104 @@ export function showError(type, message){
     if(errorElement){
         errorElement.textContent = message;
     }
+}
+
+
+export function populateProfileDetails() {
+    console.log("Attempting to populate profile details.");  
+    const user = getCurrentUser();
+    if (!user) {
+        console.error("No current user found to populate profile details.");
+        return;
+    }
+    console.log("Current user found:", user);
+
+    const usernameEl = document.getElementById('username');
+    const designationEl = document.getElementById('designation');
+    const emailEl = document.getElementById('email');
+    const birthDateEl = document.getElementById('birthDate');
+    const aboutContentEl = document.getElementById('aboutContent');
+
+    if (usernameEl) usernameEl.textContent = user.username || 'N/A';
+    if (designationEl) designationEl.textContent = user.designation || 'N/A';
+    if (emailEl) emailEl.textContent = user.email || 'N/A';
+    if (birthDateEl) birthDateEl.textContent = user.birthDate || 'N/A'; 
+    if (aboutContentEl) aboutContentEl.textContent = user.aboutContent || 'N/A'; 
+
+    console.log("Profile details populated.");
+}
+
+export function initProfileEdit() {
+    console.log("Attempting to initialize profile edit functionality.");
+    const editButton = document.getElementById('editProfileBtn');
+    const profileDetailsDiv = document.querySelector('.profile-details');
+
+    if (!editButton || !profileDetailsDiv) {
+        console.error("Profile edit elements not found.");
+        return;
+    }
+    console.log("Profile edit elements found.");
+
+    let isEditing = false;
+    let originalDetailsHTML = profileDetailsDiv.innerHTML;
+
+    editButton.addEventListener('click', () => {
+        if (isEditing) {
+            // Save functionality
+            const updatedDetails = {
+                username: document.getElementById('edit-username').value.trim(),
+                designation: document.getElementById('edit-designation').value.trim(),
+                email: document.getElementById('edit-email').value.trim(),
+                birthDate: document.getElementById('edit-birthDate').value.trim(),
+                aboutContent: document.getElementById('edit-aboutContent').value.trim(),
+            };
+
+            updateCurrentUser(updatedDetails);
+            populateProfileDetails();
+            profileDetailsDiv.innerHTML = originalDetailsHTML; 
+            isEditing = false;
+            editButton.innerHTML = '<i class="fa-solid fa-user-pen"></i>'; 
+        } else {
+            
+            originalDetailsHTML = profileDetailsDiv.innerHTML; 
+            const user = getCurrentUser();
+            if (!user) {
+                console.error("No current user found to edit profile details.");
+                return;
+            }
+
+            profileDetailsDiv.innerHTML = `
+                <div class="profile-name details">
+                    <p class="name label-title">Username</p>
+                    <input type="text" id="edit-username" value="${user.username || ''}">
+                </div>
+                <div class="profile-designation details">
+                    <p class="designation label-title">Designation</p>
+                    <input type="text" id="edit-designation" value="${user.designation || ''}">
+                </div>
+                <div class="profile-email details">
+                    <p class="email label-title">Email</p>
+                    <input type="email" id="edit-email" value="${user.email || ''}">
+                </div>
+                <div class="profile-dateOfBirth details">
+                    <p class="birthdate label-title">Date of Birth</p>
+                    <input type="date" id="edit-birthDate" value="${user.birthDate || ''}">
+                </div>
+                <div class="profile-about details">
+                    <p class="about-me label-title">About</p>
+                    <textarea id="edit-aboutContent">${user.aboutContent || ''}</textarea>
+                </div>
+                <button id="cancelProfileBtn">Cancel</button>
+            `;
+
+            document.getElementById('cancelProfileBtn').addEventListener('click', () => {
+                profileDetailsDiv.innerHTML = originalDetailsHTML; 
+                isEditing = false;
+                editButton.innerHTML = '<i class="fa-solid fa-user-pen"></i>'; 
+            });
+
+            isEditing = true;
+            editButton.textContent = 'Save'; 
+        }
+    });
 }

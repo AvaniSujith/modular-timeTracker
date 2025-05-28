@@ -425,7 +425,13 @@
   }
   
   .sidebar-nav .nav-item.active .nav-link {
-    background-color: #050416;
+    /* background-color: #2a258a; */
+    background: rgba(255, 255, 255, 0.25) ;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(4px);
+   /* -webkit-backdrop-filter: blur( 4px ); */
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
   }
   
   .sidebar-nav .nav-icon {
@@ -1280,6 +1286,7 @@
     right: 0;
     top: 0;
     padding: 8px;
+    margin: 10px;
     font-size: 20px;
     background-color: #b08aa7;
     color: #FFFFFF;
@@ -1363,6 +1370,8 @@
 
   .profile-info{
     display: flex;
+    justify-content: center;
+    /* align-items: center; */
     width: 100%;
     height: 100%;
   }
@@ -1387,7 +1396,7 @@
   }
 
   .label-title{
-    width: 50%;
+    width: 35%;
     padding: 10px 0px 10px 0px;
     font-size: 26px;
     font-weight: 600;
@@ -1551,7 +1560,7 @@
     /* border: 3px solid #b08aa7; */
     background-color: #f7e9f8;
     /* backdrop-filter: blur(30px); */
-    border-radius: 0 30% 20% 0;
+    border-radius: 30px 30% 30% 30px;
     transition: border-radius .3s;
     color: #050416;
   }
@@ -1747,34 +1756,44 @@
     background-color: #ffffff;
     border-radius: 8px;
     /* align-items: center; */
-    border: 1px solid #e9ecef;
+    /* border: 1px solid #e9ecef; */
   }
 
   .controls-section{
     display: flex;
     gap: 15px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    border: 1px solid #e9ecef;
+    padding: 15px;
   }
 
-  .controls-section.toggles{
+  .toggles{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  /* .controls-section.toggles{
     padding-top: 10px;
     border-top: 1px solid #dee2e6;
-  }
+  } */
 
   .analytics-controls label {
-    font-size: 14px;
+    font-size: 15px;
     margin-top: 5px;
-    font-weight: 600;
-    color: #050416;
+    font-weight: 800;
+    color: #754b6b;
   }
 
   .analytics-controls select {
     padding: 8px 12px;
-    border: 1px solid #ccc;
+    border: 2px solid #b08aa7;
     border-radius: 4px;
     font-size: 14px;
+    font-weight: 600;
     background-color: #FFFFFF;
+    color: #050416;
     cursor: pointer;
     min-width: 120px;
   }
@@ -1803,13 +1822,14 @@
     width: 16px;
     height: 16px;
     cursor: pointer;
-    accent-color: #4caf50;
+    accent-color: #b08aa7;
   }
 
   .toggle-label{
-    font-size: 13px;
-    font-weight: 500;
-    color: #333;
+    font-size: 14px;
+    text-wrap: nowrap;
+    font-weight: 600;
+    color: #050416;
     user-select: none;
   }
 
@@ -1856,7 +1876,7 @@
     width: 60px;
     justify-content: space-between;
     height: calc(100% -40px);
-    padding: 10px 0;
+    padding: 0 0 55px 0;
     margin-right: 10px;
   }
   .y-axis-label {
@@ -1865,7 +1885,7 @@
     justify-content: flex-end; 
     padding-right: 8px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 700;
     height: 20px;
     color: #666;
 
@@ -1884,9 +1904,11 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: 2px;
-    padding: 10px 0;
+    padding: 0 10px ;
     position: relative;
     background-color: #fafafa;
+    border-left: 2px solid #b08aa7;
+    border-bottom: 2px solid #b08aa7;
   }
 
   .chart-area.show-grid::before{
@@ -1909,9 +1931,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* justify-content: space-around; */
     height: 100%;
     position: relative;
-    margin-left: 20px;
+    /* margin-left: 20px; */
   }
 
   .histogram-bar{
@@ -1979,8 +2002,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     /* writing-mode: vertical-rl;  */
     /* writing-mode: horizontal-tb; */
     text-align: center;
@@ -2013,8 +2036,38 @@
     gap: 5px;
     align-items: center;
     justify-content: center;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 600;
    }
 
+  .details input, 
+  .details textarea{
+    margin-bottom: 2px ;
+    width: 65%;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid #050416;
+    border-radius: 8px;
+    padding: 8px 10px;
+    /* width: 50%; */ 
+    color: #754b6b;
+  }
+
+  #edit-birthDate{
+    width: fit-content;
+  }
+
+  #cancelProfileBtn{
+    background-color: #b08aa7;
+    color: #ffffff;
+    padding: 8px 12px;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 15px;
+  }
   @media screen and (max-width:1195px){
     /* .col-1{
       display: none;
@@ -2031,6 +2084,10 @@
     .signup-form{
       left: 56%;
       width: 36%;
+    }
+
+    .controls-section{
+      flex-wrap: wrap;
     }
 
   }
@@ -2330,6 +2387,12 @@
     }
   }
 
+  @media screen and (max-width: 572px){
+    .toggles{
+      flex-wrap: wrap;
+    }
+  }
+
 
   @media screen and (max-width: 550px){
     
@@ -2347,9 +2410,7 @@
       box-shadow: unset;
     }
 
-
   }
-
 
   @media screen and (max-width: 470px){
     

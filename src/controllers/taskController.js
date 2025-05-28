@@ -1,4 +1,4 @@
-//taskController.js
+
 import * as taskService from '../services/taskService.js';
 import * as taskView from '../views/taskView.js';
 import { setActiveTask, getActiveTaskId, clearActiveTask, getTaskById } from '../services/taskService.js';
@@ -47,7 +47,7 @@ export function renderTables(){
 }
 
 
-function handleMoreClick(taskId){
+export function handleMoreClick(taskId){
     console.log("handleMoreClick called with taskId:", taskId);
     
     taskView.showDetailsModal(taskId, {
@@ -349,3 +349,4 @@ export function completeActiveTask() {
 
     }
 }
+

@@ -76,28 +76,46 @@ function getMaxTime(data){
 }
 
 function normalizedMaxTime(maxTime, timeUnit){
-    if(maxTime === 0) return timeUnit === "hours" ? 240 : 60;
-    
+    // if(maxTime === 0) return timeUnit === "hours" ? 240 : 60;
+    if(maxTime === 0) return timeUnit === "hours" ? 60 : 5
+;    
     if(timeUnit === "hours"){
         const maxHours = Math.ceil(maxTime / 60);
-        return Math.ceil(maxHours / 2) * 2 * 60;
+        // return Math.ceil(maxHours / 2) * 2 * 60;
+        return maxHours * 60;
     }else{
-        return Math.ceil(maxTime / 30) * 30
+        // return Math.ceil(maxTime / 30) * 30
+        return Math.ceil(maxTime / 5) * 5;
     }
 }
 
 function generateYAxisLabels(normalizedMax, timeUnit){
     const labels = [];
-    let interval = timeUnit === "hours" ? 120 : 30;
+    // let interval = timeUnit === "hours" ? 120 : 30;
     
-    if(timeUnit === "hours" && normalizedMax > 480){
-        interval = 240;
+    // if(timeUnit === "hours" && normalizedMax > 480){
+    //     interval = 240;
+    // }
+
+    let interval;
+    if(timeUnit === "hours"){
+        interval = 60;
+    }else{
+        interval = 5;
     }
 
-    for(let i = 0; i <= normalizedMax; i += interval){
+    // for(let i = 0; i <= normalizedMax; i += interval){
+    //     if(timeUnit === "hours"){
+    //         const hours = i / 60;
+    //         labels.push(hours % 1 === 0 ? hours + 'h' : hours.toFixed(1) + 'h');
+    //     }else{
+    //         labels.push(i + 'm');
+    //     }
+    // }
+
+    for(let i = interval; i <= normalizedMax; i += interval){
         if(timeUnit === "hours"){
-            const hours = i / 60;
-            labels.push(hours % 1 === 0 ? hours + 'h' : hours.toFixed(1) + 'h');
+            labels.push((i / 60) + 'h');
         }else{
             labels.push(i + 'm');
         }
@@ -109,7 +127,7 @@ function generateYAxisLabels(normalizedMax, timeUnit){
 
 function generateColors(count){
     const colors = [
-        "#4CAF50", 
+        "#b08aa7", 
         "#2196F3", 
         "#FF9800", 
         "#E91E63", 

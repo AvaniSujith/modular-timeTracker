@@ -5,6 +5,7 @@ import { initFilterController } from "./controllers/filterController.js";
 import { initTaskController, pauseActiveTask, completeActiveTask } from "./controllers/taskController.js"; 
 // import { createGraph } from "./analytics.js";
 import { handlingNavLinks, sideBarToggler } from "./ui.js";
+import { initProfileEdit } from "./views/authView.js";
 // import * as authService from './services/authService.js';
 import { initializeTimer, timerStart, timerEnd, resetTimerDisplay } from "./timer.js"; 
 import { getActiveTask } from "./services/taskService.js"; 

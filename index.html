@@ -329,7 +329,19 @@
                 <div class="search-results">
                         
                     <h2>Search Results</h2>
-                    <div id="searchResultsContainer"></div>
+                    <div id="searchResultsContainer">
+                          <table class="filtered-task-table">
+                            <thead>
+                                <tr>
+                                    <th>Task Name</th>
+                                    <th>Priority</th>
+                                    <th>Tag</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                          </table>
+                    </div>
                   
                 </div>
             </div>
@@ -342,12 +354,15 @@
             </button>
             <div class="profile-container">
                 <div class="profile-info">
-                    <div class="profile-avatar">
+                    <!-- <div class="profile-avatar">
                     
                         <span class="profile-pic"></span>
-                        <!-- <input type="file" class="profile-btn"> -->
+                         <input type="file" class="profile-btn"> 
 
-                    </div>
+                        <div class="calender">
+                                                      
+                        </div>
+                    </div> -->
 
                     <div class="profile-details">
 
@@ -374,27 +389,6 @@
                         <div class="profile-about details">
                             <p class="about-me label-title">About</p>
                             <p id="aboutContent" class="label-placeholder"></p>
-                        </div>
-
-                        <div class="social-media details">
-                            <p id="linkedIn">
-                                <span class="profile-title">
-                                    <i class="fa-brands fa-linkedin"></i>
-                                </span>
-                                <span id="linkedIn-id"></span>
-                            </p>
-                            <p id="github">
-                                <span class="profile-title">
-                                    <i class="fab fa-github"></i>
-                                </span>
-                                <span id="github-id"></span>
-                            </p>
-                            <p id="hackerRank">
-                                <span class="profile-title">
-                                    <i class="fab fa-hackerrank"></i>
-                                </span>
-                                <span id="hackerRank-id"></span>
-                            </p>
                         </div>
                      
                     </div>

@@ -21,25 +21,30 @@ function buildControls(){
                 <option value="hours">Hours</option>
                 <option value="minutes">Minutes</option>
             </select>
+
+            <div class="toggles">
+
+                <label for="colorMode">Colors:</label>
+                <select id="colorMode">
+                    <option value="single">Same Color</option>
+                    <option value="distinct">Distinct Colors</option>
+                </select>
+
+                <label class="toggle-container">
+                    <input type="checkbox" id="gridToggle" checked>
+                    <span class="toggle-label">Grid Lines</span>
+                </label>
+
+                <label class="toggle-container">
+                    <input type="checkbox" id="borderToggle" checked>
+                    <span class="toggle-label">Bar Border</span>
+                </label>
+
+            </div>
+
         </div>
 
-        <div class="controls-section toggles">
-            <label class="toggle-container">
-                <input type="checkbox" id="gridToggle" checked>
-                <span class="toggle-label">Grid Lines</span>
-            </label>
-
-            <label class="toggle-container">
-                <input type="checkbox" id="borderToggle" checked>
-                <span class="toggle-label">Bar Border</span>
-            </label>
-
-            <label for="colorMode">Colors:</label>
-            <select id="colorMode">
-                <option value="single">Same Color</option>
-                <option value="distinct">Distinct Colors</option>
-            </select>
-        </div>
+       
 
         <div class="week-controller">
             <a href="#" id="lastWeek">
@@ -190,7 +195,7 @@ function updateBarColors() {
     
     const colors = GRAPH_SETTINGS.colorMode === "distinct"
         ? generateColors(bars.length)
-        : ["#4caf50"];
+        : ["#b08aa7"];
 
     bars.forEach(function(bar, index) {
         const isEmpty = bar.dataset.height === '0';

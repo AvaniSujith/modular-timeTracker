@@ -1,4 +1,4 @@
-//taskView
+
 import { todayISO } from "../utils/dateUtils.js";
 import { formatTimeFragment } from "../utils/timeUtils.js";
 import * as taskService from '../services/taskService.js';
@@ -105,7 +105,7 @@ export function renderPausedTable(tasks, onMoreClick){
         const moreBtn = row.querySelector('.more-btn');
         moreBtn.onclick = (e) => {
             e.preventDefault();
-            console.log("More button clicked for task:", task.id);
+            // console.log("More button clicked for task:", task.id);
             onMoreClick(task.id);
         };
         tbody.appendChild(row);
@@ -278,7 +278,7 @@ export function showDetailsModal(taskId, actions = {}){
     modalElement.style.display = "flex";
 }
 
-function editTask(taskId, onSave) {
+ export function editTask(taskId, onSave) {
     const task = taskService.getTaskById(taskId);
     
     if (!task) {

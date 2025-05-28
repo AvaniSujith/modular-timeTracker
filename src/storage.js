@@ -1,4 +1,3 @@
-//storage.js
 
 // import { addTimes } from "./utils/timeUtils.js";
 import { getCurrentUser } from "./services/authService.js";
