@@ -15,7 +15,7 @@ let addTaskBtn;
 function updateTimerButtonState(hasActiveTask, isPaused = false) {
     if (startTimerBtn && pauseTimerBtn && endTimerBtn) {
         if (hasActiveTask) {
-            startTimerBtn.disabled = !isPaused;
+            startTimerBtn.disabled = isPaused;
             pauseTimerBtn.disabled = isPaused; 
             endTimerBtn.disabled = false;
         } else {

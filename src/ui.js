@@ -87,11 +87,10 @@ export function menuToggler(){
                 mainSidebar.classList.toggle('show-menu');
                 mainSidebar.classList.remove('collapse');
                 console.log("Menu toggled on small screen");
-            }
-        
+            }        
         });
     } else {
-        console.warn("Menu toggler, sidebar nav, or main sidebar not found");
+        console.warn("Menu toggler/sidebar nav/main sidebar not found");
     }
 }
 

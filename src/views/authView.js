@@ -160,9 +160,7 @@ export function showLogoutButton(logout){
     console.error("logout link not found");
   }
 
-  
 }
-
 
 export function showError(type, message){
     const errorElement = document.getElementById(type === 'login' ? 'signInError' : 'signUpError');
@@ -173,7 +171,7 @@ export function showError(type, message){
 
 
 export function populateProfileDetails() {
-    console.log("Attempting to populate profile details.");  
+    // console.log("Attempting to populate profile details.");  
     const user = getCurrentUser();
     if (!user) {
         console.error("No current user found to populate profile details.");
@@ -193,11 +191,11 @@ export function populateProfileDetails() {
     if (birthDateEl) birthDateEl.textContent = user.birthDate || 'N/A'; 
     if (aboutContentEl) aboutContentEl.textContent = user.aboutContent || 'N/A'; 
 
-    console.log("Profile details populated.");
 }
 
 export function initProfileEdit() {
-    console.log("Attempting to initialize profile edit functionality.");
+    // console.log("Attempting to initialize profile edit functionality.");
+  
     const editButton = document.getElementById('editProfileBtn');
     const profileDetailsDiv = document.querySelector('.profile-details');
 
@@ -205,7 +203,7 @@ export function initProfileEdit() {
         console.error("Profile edit elements not found.");
         return;
     }
-    console.log("Profile edit elements found.");
+    // console.log("Profile edit elements found.");
 
     let isEditing = false;
     let originalDetailsHTML = profileDetailsDiv.innerHTML;

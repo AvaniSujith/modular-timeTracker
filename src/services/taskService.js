@@ -80,25 +80,25 @@ export function getActiveTask(){
 }
 
 export function setActiveTask(id){
-    console.log("setArchive: setting active task id", id);
+    // console.log("setArchive: setting active task id", id);
     saveActiveTaskId(id);
 }
 
 export function clearActiveTask(){
-    console.log("clearActiveTask:")
+    // console.log("clearActiveTask:")
     removeActiveTaskId();
 }
 
 export function getActiveTaskId(){
     const activeId = loadActiveTaskId();
-    console.log("getActiveTaskId", activeId)
+    // console.log("getActiveTaskId", activeId)
     return activeId;
 }
 
 
 export function getTaskById(id){
     const task = getTasks().find(task => task.id === id) || null;
-    console.log("getTaskById", id, ":", task);
+    // console.log("getTaskById", id, ":", task);
     return task;
 }
 

@@ -32,28 +32,31 @@ export function login(email, password){
     if(!email || !password) return null;
 
     const users = loadUsers();
-    console.log("Login attempt with email:", email, "password:", password);
-    console.log("Users loaded from localStorage:", users);
+
+    console.log("Login email:", email, "password:", password);
+    // console.log("Users loaded from localStorage:", users);
 
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
 
-    console.log("Trimmed and lowercased email:", trimmedEmail);
-    console.log("Trimmed password:", trimmedPassword);
+    // console.log("Trimmed and lowercased email:", trimmedEmail);
+    // console.log("Trimmed password:", trimmedPassword);
 
     const user = users.find(u => {
         console.log("Checking user:", u);
+
         if (!u || typeof u !== 'object') {
             console.log("Invalid user format in array.");
             return false;
         }
+
         const userEmail = String(u.email).trim().toLowerCase();
         const userPassword = String(u.password).trim();
 
-        console.log("Comparing with stored user - Email:", userEmail, "Password:", userPassword);
+        // console.log("Comparing with stored user - Email:", userEmail, "Password:", userPassword);
         const emailMatch = userEmail === trimmedEmail;
         const passwordMatch = userPassword === trimmedPassword;
-        console.log("Email match:", emailMatch, "Password match:", passwordMatch);
+        // console.log("Email match:", emailMatch, "Password match:", passwordMatch);
 
         return emailMatch && passwordMatch;
     });

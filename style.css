@@ -18,6 +18,10 @@
   
   }
 
+  .add-task-btn:disabled,
+  .control-btns button:disabled{
+    cursor: not-allowed;
+  }
   /* #login-page .main-nav{
     display: none;
   } */
@@ -1826,7 +1830,7 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: 2px;
-    padding: 0 10px ;
+    padding: 0 82px ;
     position: relative;
     background-color: #fafafa;
     border-left: 2px solid #b08aa7;
@@ -1990,6 +1994,27 @@
     width: 100%;
     margin-top: 15px;
   }
+
+   @media screen and (max-width: 1741px) {
+    .chart-area{
+      padding: 0 73px;
+    }
+  } 
+
+  @media screen and (max-width: 1480px) {
+    .chart-area{
+      padding: 0 55px;
+    }
+  } 
+
+
+
+  @media screen and (max-width:1300px){
+    .chart-area{
+      padding: 0 42px;
+    }
+  }
+
   @media screen and (max-width:1195px){
     /* .col-1{
       display: none;
@@ -1997,6 +2022,10 @@
 
     .form-container{
       max-width: 900px;
+    }
+
+    .chart-area{
+      padding:  0 40px;
     }
 
   }
@@ -2010,6 +2039,10 @@
 
     .controls-section{
       flex-wrap: wrap;
+    }
+
+    .chart-area{
+      padding: 0 22px;
     }
 
   }
@@ -2054,6 +2087,15 @@
       margin-bottom: 8px;
     }
   
+  }
+
+  @media screen and (max-width: 839px) {
+    .chart-area{
+      padding: 0 15px;
+    }
+    .bar-container{
+      width: 50px !important;
+    }
   }
 
 
@@ -2279,9 +2321,9 @@
 
     .sidebar-nav {
       display: none;
-      position: static; /* Change position to static */
-      bottom: auto; /* Remove bottom positioning */
-      height: auto; /* Allow height to adjust based on content */
+      position: static; 
+      bottom: auto; 
+      height: auto;
     }
 
     .sidebar-nav.show-menu {
@@ -2323,11 +2365,23 @@
       width: 74%;
       left: 13%;
     }
+
+    .chart-area{
+      padding:  0 8px;
+    }
   }
 
   @media screen and (max-width: 572px){
     .toggles{
       flex-wrap: wrap;
+    }
+
+    .bar-container{
+      width: 40px !important;
+    }
+
+    .chart-area{
+      padding: 0 4px;
     }
   }
 
@@ -2370,6 +2424,10 @@
 
     .histogram-container{
       min-width: 300px;
+    }
+
+    .bar-container{
+      width: 35px !important;
     }
 
   }

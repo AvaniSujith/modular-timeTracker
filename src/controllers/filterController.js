@@ -33,6 +33,7 @@ import { getFilterValues } from "../services/filterService.js";
 
 export function initFilterController(){
     const applyBtn = document.getElementById('applyFiltersBtn');
+    
     if(applyBtn){
          applyBtn.addEventListener('click', () => {
             const allTasks = getTasks();
@@ -41,7 +42,7 @@ export function initFilterController(){
             renderSearchResults(filteredTasks);
         });
     }else{
-        console.warn('Apply filter btn not found')
+        console.warn('Apply filter btn not found');
     }
    
 }
