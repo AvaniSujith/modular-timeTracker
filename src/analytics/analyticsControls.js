@@ -70,7 +70,7 @@ function buildControls(){
     timePeriodSelect.value = GRAPH_SETTINGS.period;
     timeUnitSelect.value = GRAPH_SETTINGS.timeUnit;
     gridToggle.checked = GRAPH_SETTINGS.showGridLines;
-    borderToggle.checkbox = GRAPH_SETTINGS.showBarBorders;
+    borderToggle.checked = GRAPH_SETTINGS.showBarBorders;
     colorModeSelect.value = GRAPH_SETTINGS.colorMode;
 
     setupControlEventListeners(controls);

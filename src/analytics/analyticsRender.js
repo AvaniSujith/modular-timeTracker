@@ -83,6 +83,9 @@ function createChartAndXAxis(completeData, normalizedMax) {
     
     const chartArea = document.createElement("div");
     chartArea.className = 'chart-area';
+
+    chartArea.classList.add(`period-${GRAPH_SETTINGS.period}`);
+    
     if (GRAPH_SETTINGS.showGridLines) {
         chartArea.classList.add('show-grid');
     }

@@ -1853,6 +1853,26 @@
 
   }
 
+  .chart-area.period-2week{
+    padding: 0 30px;
+  }
+
+  .chart-area.period-1month{
+    padding: 0 10px;
+  }
+
+  .chart-area.period-1month .bar-container{
+    width: 40px !important;
+  }
+
+  .chart-area.period-6month{
+    padding: 0 8px;
+  }
+
+  .chart-area.period-6month .bar-container{
+    width: 25px !important;
+  }
+
   .bar-container{
     display: flex;
     flex-direction: column;
@@ -1999,15 +2019,31 @@
     .chart-area{
       padding: 0 73px;
     }
+
+    .chart-area.period-1month .bar-container{
+      width: 35px !important;
+    }
   } 
+
+  @media screen and (max-width: 1535px) {
+    .chart-area.period-1month{
+      padding: 0 7px;
+    }
+  }
 
   @media screen and (max-width: 1480px) {
     .chart-area{
       padding: 0 55px;
     }
+
+    .chart-area.period-2week{
+      padding:  0 20px;
+    }
+
+    .chart-area.period-1month{
+      padding:  0 2px;
+    }
   } 
-
-
 
   @media screen and (max-width:1300px){
     .chart-area{
@@ -2028,6 +2064,10 @@
       padding:  0 40px;
     }
 
+    .chart-area.period-2week{
+      padding:  0 11px;
+    }
+
   }
 
   @media screen and (max-width:1024px){
@@ -2043,6 +2083,10 @@
 
     .chart-area{
       padding: 0 22px;
+    }
+
+    .chart-area.period-2week .bar-container{
+      width: 35px !important;
     }
 
   }
@@ -2086,7 +2130,17 @@
     #applyFiltersBtn{
       margin-bottom: 8px;
     }
+
+    .chart-area.period-1month .bar-container{
+      width: 30px !important;
+    }
   
+  }
+
+  @media screen and (max-width: 910px){
+    .chart-area.period-2week{
+      padding: 0 4px;
+    }
   }
 
   @media screen and (max-width: 839px) {
@@ -2328,6 +2382,10 @@
 
     .sidebar-nav.show-menu {
       display: block;
+    }
+
+    .chart-area.period-1month .bar-container{
+      width: 25px !important;
     }
   }
 

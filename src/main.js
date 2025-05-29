@@ -74,7 +74,7 @@ window.onload = () => {
     const isValidUser = currentUser && typeof currentUser === 'object' && currentUser.email;
 
         if (isValidUser) {
-            console.log("Valid user found, showing application UI.");
+            // console.log("Valid user found, showing application UI.");
             if (mainSidebar) mainSidebar.classList.remove('hidden');
             if (mainNav) mainNav.classList.remove('hidden');
             if (mainContent) mainContent.classList.remove('hidden');
@@ -96,7 +96,7 @@ window.onload = () => {
             renderTables();
 
         } else {
-            console.log("No valid user found, showing login page.");
+            // console.log("No valid user found, showing login page.");
             if (mainSidebar) mainSidebar.classList.add('hidden');
             if (mainNav) mainNav.classList.add('hidden');
             if (mainContent) mainContent.classList.add('hidden');
