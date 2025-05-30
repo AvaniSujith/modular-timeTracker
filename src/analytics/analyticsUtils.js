@@ -8,7 +8,6 @@ function getWeekStartDate(offset){
     return startOfWeek;
 }
 
-
 function formatWeekDisplay(offset){
     if(offset === 0){
         return "This Week";
@@ -21,6 +20,21 @@ function formatWeekDisplay(offset){
     }else{
         return offset + ' Week Ahead';
     }
+}
+
+export function getWeekRangeDays(date = new Date()){
+    const day = date.getDay();
+
+    const sunday = new Date(date);
+    sunday.setDate(date.getDate() - day);
+
+    const saturday = new Date(date);
+    saturday.setDate(date.getDate() + (6 - day));
+
+    return{
+        sundayDay: sunday.getDate(),
+        saturdayDay: saturday.getDate()
+    };
 }
 
 function generateDateRange(period, weekOffset){
@@ -40,19 +54,9 @@ function generateDateRange(period, weekOffset){
             startDate = getWeekStartDate(weekOffset);
             break;
         case "1month":
-            days = 30;
-            startDate = new Date();
-            startDate.setDate(startDate.getDate() - days + 1);
-            break;
-        case "6month":
-            days = 180;
-            startDate = new Date();
-            startDate.setDate(startDate.getDate() - days + 1);
-            break;
-        case "1year":
-            days = 365;
-            startDate = new Date();
-            startDate.setDate(startDate.getDate() - days + 1);
+            const { startDate: monthStartDate, endDate: monthEndDate } = getMonthRangeDates(weekOffset);
+            startDate = monthStartDate;
+            days = (monthEndDate - monthStartDate) / (1000 * 60 * 60 * 24) + 1;
             break;
         default:
             days = 7;
@@ -158,17 +162,23 @@ function generateColors(count){
     return result;
 }
 
-function formatDateLabel(dateString, period){
+function formatDateLabel(dateString){
+
     const date = new Date(dateString);
 
-    if(period === "1year" || period === "6month"){
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric'});
+    const days = ["Sun", 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[date.getDay()];
 
-    }else{
-        const days = ["Sun", 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        return days[date.getDay()];
-    }
 }
+
+function getMonthRangeDates(offset){
+    if(typeof offset === 'undefined') offset = 0;
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+    const endDate = new Date(now.getFullYear(), now.getMonth() + 1 + offset, 0);
+    return { startDate, endDate };
+}
+
 
 export{
     getWeekStartDate,
@@ -178,5 +188,6 @@ export{
     normalizedMaxTime,
     generateYAxisLabels,
     generateColors,
-    formatDateLabel
+    formatDateLabel,
+    getMonthRangeDates
 };

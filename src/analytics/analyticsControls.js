@@ -1,9 +1,12 @@
-import { formatWeekDisplay, generateColors } from "./analyticsUtils.js";
-import { getGraphSettings, getCurrentWeekOffset, setCurrentWeekOffset } from "./analyticsCore.js";
+import { formatWeekDisplay, generateColors, getWeekRangeDays, getMonthRangeDates, getWeekStartDate } from "./analyticsUtils.js";
+import { getGraphSettings, getCurrentWeekOffset, setCurrentWeekOffset, GRAPH_SETTINGS } from "./analyticsCore.js";
 import { renderGraph } from "./analyticsRender.js";
 
 function buildControls(){
-     const controls = document.createElement("div");
+
+    const { sundayDay, saturdayDay} = getWeekRangeDays();
+
+    const controls = document.createElement("div");
     controls.className = "analytics-controls";
     controls.innerHTML = `
         <div class="controls-section">
@@ -12,8 +15,6 @@ function buildControls(){
                 <option value="1week">1 Week</option>
                 <option value="2week">2 Weeks</option>
                 <option value="1month">1 Month</option>
-                <option value="6month">6 Month</option>
-                <option value="1year">1 Year</option>
             </select>
 
             <label for="timeUnit">Unit:</label>
@@ -51,7 +52,7 @@ function buildControls(){
                 <i class='fas fa-arrow-alt-circle-left'></i>
             </a>
             <div class="current-week" id="currentWeek">
-                This Week
+                This Week ${sundayDay} - ${saturdayDay}
             </div>
             <a href="#" id="nextWeek">
                 <i class='fas fa-arrow-alt-circle-right'></i>
@@ -74,6 +75,7 @@ function buildControls(){
     colorModeSelect.value = GRAPH_SETTINGS.colorMode;
 
     setupControlEventListeners(controls);
+    updateWeekControllers();
 
     return controls;
 }
@@ -91,13 +93,13 @@ function setupControlEventListeners(controls){
 
     timePeriodSelect.addEventListener("change", function(event){
         GRAPH_SETTINGS.period = event.target.value;
-        // const { renderGraph } = require('./analyticsRender.js');
+        setCurrentWeekOffset(0);
         renderGraph(document.querySelector(".analytics-graph"));
+        updateWeekControllers();
     });
 
     timeUnitSelect.addEventListener("change", function(event){
         GRAPH_SETTINGS.timeUnit = event.target.value;
-        // const { renderGraph } = require('./analyticsRender.js');
         renderGraph(document.querySelector(".analytics-graph"));
     });
 
@@ -105,7 +107,7 @@ function setupControlEventListeners(controls){
         GRAPH_SETTINGS.showGridLines = event.target.checked;
         toggleGridLines(event.target.checked);
     });
-    
+
     borderToggle.addEventListener("change", function(event){
         GRAPH_SETTINGS.showBarBorders = event.target.checked;
         toggleBarBorders(event.target.checked);
@@ -118,8 +120,12 @@ function setupControlEventListeners(controls){
 
     lastWeekButton.addEventListener("click", function(event){
         event.preventDefault();
-        setCurrentWeekOffset(getCurrentWeekOffset() - 1);
-        // const { renderGraph } = require('./analyticsRender.js');
+        const GRAPH_SETTINGS = getGraphSettings();
+        if (GRAPH_SETTINGS.period === "1month") {
+            setCurrentWeekOffset(getCurrentWeekOffset() - 1); 
+        } else {
+            setCurrentWeekOffset(getCurrentWeekOffset() - 1);
+        }
         renderGraph(document.querySelector(".analytics-graph"));
         updateWeekControllers();
     });
@@ -127,9 +133,13 @@ function setupControlEventListeners(controls){
     nextWeekButton.addEventListener("click", function(event){
         event.preventDefault();
         const currentOffset = getCurrentWeekOffset();
-        if(currentOffset < 0){
-            setCurrentWeekOffset(currentOffset + 1);
-            // const { renderGraph } = require('./analyticsRender.js');
+        const GRAPH_SETTINGS = getGraphSettings();
+        if (currentOffset < 0) {
+            if (GRAPH_SETTINGS.period === "1month") {
+                setCurrentWeekOffset(currentOffset + 1); 
+            } else {
+                setCurrentWeekOffset(currentOffset + 1);
+            }
             renderGraph(document.querySelector(".analytics-graph"));
             updateWeekControllers();
         }
@@ -142,27 +152,84 @@ function updateWeekControllers() {
     const nextWeekButton = document.getElementById("nextWeek");
     const lastWeekButton = document.getElementById("lastWeek");
     const currentWeekOffset = getCurrentWeekOffset();
-    
+    const GRAPH_SETTINGS = getGraphSettings();
+
+    console.log("updateWeekControllers called");
+    console.log("currentWeekOffset:", currentWeekOffset);
+    console.log("GRAPH_SETTINGS.period:", GRAPH_SETTINGS.period);
+
     if (currentWeekElement) {
-        currentWeekElement.textContent = formatWeekDisplay(currentWeekOffset);
+        if (GRAPH_SETTINGS.period === "1month") {
+            const { startDate, endDate } = getMonthRangeDates(currentWeekOffset);
+            const options = { year: 'numeric', month: 'long' };
+            const formattedStartDate = startDate.toLocaleDateString('en-US', options);
+            currentWeekElement.textContent = formattedStartDate;
+            console.log("Month range:", formattedStartDate);
+        } else { 
+            const options = { month: 'short', day: 'numeric' };
+            if (currentWeekOffset === 0) {
+                const startDate = getWeekStartDate(currentWeekOffset);
+                let endDate = new Date(startDate);
+                let formattedEndDate;
+
+                if (GRAPH_SETTINGS.period === "2week") {
+                    endDate.setDate(startDate.getDate() + 13);
+                    formattedEndDate = endDate.toLocaleDateString('en-US', options);
+                    const formattedStartDate = startDate.toLocaleDateString('en-US', options);
+                    currentWeekElement.textContent = `${formattedStartDate} - ${formattedEndDate}`;
+                    console.log("Current 2-Week range:", `${formattedStartDate} - ${formattedEndDate}`);
+                } else { 
+                    const { sundayDay, saturdayDay } = getWeekRangeDays();
+                    currentWeekElement.textContent = `This Week ${sundayDay} - ${saturdayDay}`;
+                    console.log("Current 1-Week display:", `This Week ${sundayDay} - ${saturdayDay}`);
+                }
+            } else {
+                const startDate = getWeekStartDate(currentWeekOffset);
+                let endDate = new Date(startDate);
+                let formattedEndDate;
+
+                const formattedStartDate = startDate.toLocaleDateString('en-US', options);
+
+                if (GRAPH_SETTINGS.period === "2week") {
+                    endDate.setDate(startDate.getDate() + 13); 
+                    formattedEndDate = endDate.toLocaleDateString('en-US', options);
+                    currentWeekElement.textContent = `${formattedStartDate} - ${formattedEndDate}`;
+                    console.log("Navigated 2-Week range:", `${formattedStartDate} - ${formattedEndDate}`);
+                } else { 
+                    endDate.setDate(startDate.getDate() + 6); 
+                    formattedEndDate = endDate.toLocaleDateString('en-US', options);
+                    currentWeekElement.textContent = `${formattedStartDate} - ${formattedEndDate}`;
+                    console.log("Navigated 1-Week range:", `${formattedStartDate} - ${formattedEndDate}`);
+                }
+
+                console.log("Week startDate:", startDate);
+                console.log("Week endDate:", endDate);
+            }
+        }
     }
-    
+
     if (nextWeekButton) {
+        console.log("nextWeekButton current opacity:", nextWeekButton.style.opacity);
+        console.log("nextWeekButton current pointerEvents:", nextWeekButton.style.pointerEvents);
+        console.log("nextWeekButton current cursor:", nextWeekButton.style.cursor);
         if (currentWeekOffset >= 0) {
             nextWeekButton.style.opacity = "0.5";
             nextWeekButton.style.pointerEvents = "none";
             nextWeekButton.style.cursor = "not-allowed";
+            console.log("nextWeekButton disabled");
         } else {
             nextWeekButton.style.opacity = "1";
             nextWeekButton.style.pointerEvents = "auto";
             nextWeekButton.style.cursor = "pointer";
+            console.log("nextWeekButton enabled");
         }
     }
-    
+
     if (lastWeekButton) {
         lastWeekButton.style.opacity = "1";
         lastWeekButton.style.pointerEvents = "auto";
         lastWeekButton.style.cursor = "pointer";
+        console.log("lastWeekButton enabled");
     }
 }
 
@@ -192,7 +259,7 @@ function updateBarColors() {
     const bars = document.querySelectorAll('.histogram-bar');
     const GRAPH_SETTINGS = getGraphSettings();
     // const { generateColors } = require('./analyticsUtils.js');
-    
+
     const colors = GRAPH_SETTINGS.colorMode === "distinct"
         ? generateColors(bars.length)
         : ["#b08aa7"];
@@ -205,7 +272,7 @@ function updateBarColors() {
             const color = GRAPH_SETTINGS.colorMode === "distinct"
                 ? colors[index]
                 : colors[0];
-            
+
             bar.style.backgroundColor = color;
             bar.dataset.originalColor = color;
         }
